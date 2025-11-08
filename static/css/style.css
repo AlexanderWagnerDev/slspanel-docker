@@ -1,0 +1,11 @@
+body.dark {
+    background: #121212;
+    color: #eee;
+}
+.bg-dark, .accordion-button.bg-dark {
+    background: #222 !important;
+    color: #eee !important;
+}
+.btn-primary, .btn-success, .btn-danger {
+    border: none;
+}

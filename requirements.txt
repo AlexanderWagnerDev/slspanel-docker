@@ -1,0 +1,4 @@
+Django
+gunicorn
+requests
+whitenoise

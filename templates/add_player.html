@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %}{% trans "Add Player" %}{% endblock %}
+
+{% block content %}
+<h1>{% trans "Add Player to Stream" %}</h1>
+<form method="post">
+    {% csrf_token %}
+    <label for="stream_id">{% trans "Stream ID" %}</label>
+    <input type="text" id="stream_id" name="stream_id" value="{{ request.GET.stream_id|default_if_none:'' }}" required>
+
+    <label for="player_key">{% trans "Player Key" %}</label>
+    <input type="text" id="player_key" name="player_key" value="{{ data.player_key|default_if_none:'' }}" >
+
+    <label for="description">{% trans "Description" %}</label>
+    <textarea id="description" name="description">{{ data.description|default_if_none:'' }}</textarea>
+
+    {% if error %}
+    <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+
+    <button type="submit" class="btn btn-primary">{% trans "Add Player" %}</button>
+</form>
+{% endblock %}

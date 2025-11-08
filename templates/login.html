@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<form method="post" class="mt-5 p-4 bg-secondary bg-opacity-10 rounded" style="max-width: 400px; margin:auto">
+    {% csrf_token %}
+    <h2 class="mb-4">{% trans 'Login' %}</h2>
+    {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+    <input type="text" name="username" placeholder="{% trans 'Username' %}" class="form-control mb-3" required autofocus>
+    <input type="password" name="password" placeholder="{% trans 'Password' %}" class="form-control mb-3" required>
+    <button type="submit" class="btn btn-primary w-100">{% trans 'Login' %}</button>
+</form>
+{% endblock %}

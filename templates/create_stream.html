@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %}{% trans "Create Stream" %}{% endblock %}
+
+{% block content %}
+<h1>{% trans "Create Stream" %}</h1>
+<form method="post">
+    {% csrf_token %}
+    <label for="publisher">{% trans "Publisher Key" %}</label>
+    <input type="text" name="publisher" id="publisher" value="{{ data.publisher|default:'' }}">
+    
+    <label for="player">{% trans "Player Key" %}</label>
+    <input type="text" name="player" id="player" value="{{ data.player|default:'' }}">
+
+    <label for="description">{% trans "Description" %}</label>
+    <textarea name="description" id="description">{{ data.description|default:'' }}</textarea>
+
+    {% if error %}
+    <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+
+    <button type="submit" class="btn btn-primary">{% trans "Create" %}</button>
+</form>
+{% endblock %}

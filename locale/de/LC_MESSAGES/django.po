@@ -1,0 +1,34 @@
+msgid ""
+msgstr ""
+"Language: de\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "Login"
+msgstr "Anmelden"
+
+msgid "Username"
+msgstr "Benutzername"
+
+msgid "Password"
+msgstr "Passwort"
+
+msgid "Streams on SRT Live Server"
+msgstr "Streams auf dem SRT Live Server"
+
+msgid "Logout"
+msgstr "Abmelden"
+
+msgid "Create Stream"
+msgstr "Stream erstellen"
+
+msgid "Players"
+msgstr "Player"
+
+msgid "Delete"
+msgstr "Löschen"
+
+msgid "No streams found"
+msgstr "Keine Streams gefunden"
+
+msgid "No players found"
+msgstr "Keine Player gefunden"

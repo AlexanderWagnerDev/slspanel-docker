@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %}Streams{% endblock %}
+{% block content %}
+<h1>{% trans 'Streams on SLS Live Server' %}</h1>
+<a class="btn btn-outline-light mb-3" href="{% url 'streams:logout' %}">{% trans 'Logout' %}</a>
+
+<a href="{% url 'streams:create_stream' %}" class="btn btn-success mb-3">{% trans 'Create Stream' %}</a>
+
+{% if streams %}
+    <div class="accordion accordion-flush" id="streamAccordion">
+    {% for stream in streams %}
+        <div class="accordion-item bg-dark">
+            <h2 class="accordion-header" id="heading{{ forloop.counter }}">
+                <button class="accordion-button collapsed bg-dark text-light" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ forloop.counter }}" aria-expanded="false" aria-controls="collapse{{ forloop.counter }}">
+                    {{ stream.publisher }}
+                </button>
+            </h2>
+            <div id="collapse{{ forloop.counter }}" class="accordion-collapse collapse" aria-labelledby="heading{{ forloop.counter }}" data-bs-parent="#streamAccordion">
+                <div class="accordion-body">
+                    <h5>{% trans 'Players' %}</h5>
+                    {% if stream.player %}
+                        <ul class="list-group list-group-flush">
+                        {% for player in stream.player %}
+                            <li class="list-group-item bg-secondary bg-opacity-20 d-flex justify-content-between align-items-center">
+                                {{ player }}
+                                <form method="post" action="{% url 'streams:delete_player' player %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-danger">{% trans 'Delete' %}</button>
+                                </form>
+                            </li>
+                        {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p><em>{% trans 'No players found' %}</em></p>
+                    {% endif %}
+                    <a href="{% url 'streams:add_player' %}?stream_id={{ stream.publisher }}" class="btn btn-primary mt-3">{% trans 'Add Player' %}</a>
+
+                    {% if stream.publisher %}
+                    <form method="post" action="{% url 'streams:delete_stream' stream.publisher %}" class="mt-3">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">{% trans 'Delete Stream' %}</button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    </div>
+{% else %}
+    <p>{% trans 'No streams found' %}</p>
+{% endif %}
+{% endblock %}
