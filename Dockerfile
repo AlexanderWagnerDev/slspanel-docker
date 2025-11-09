@@ -1,4 +1,4 @@
-FROM alexanderwagnerdev/alpine:builder as builder
+FROM alexanderwagnerdev/alpine:builder AS builder
 
 RUN apk update && \
     apk upgrade && \
