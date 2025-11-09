@@ -1,8 +1,10 @@
+version: '3.8'
+
 services:
   slspanel:
     image: alexanderwagnerdev/slspanel:beta
     container_name: slspanel
-     restart: unless-stopped
+    restart: unless-stopped
     environment:
       - LANG=en
       - TZ=UTC
@@ -11,9 +13,9 @@ services:
       - SRT_PUBLISH_PORT=4000
       - SRT_PLAYER_PORT=4001
       - SRTLA_PUBLISH_PORT=5000
-      - SLS_DOMAIN_IP=your-sls-domain-sls-domain-ip 
+      - SLS_DOMAIN_IP=your-sls-domain-sls-domain-ip
       - SLS_STATS_PORT=8789
       - WEB_USERNAME=admin
       - WEB_PASSWORD=password
     ports:
-      - "8000:8000/tcp"
+      - "8000:8000"
