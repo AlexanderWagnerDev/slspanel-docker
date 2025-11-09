@@ -48,13 +48,20 @@ def call_api(method, endpoint, data=None):
 @login_required(login_url='streams:login')
 def index(request):
     code, res = call_api('GET', '/api/stream-ids')
-    streams = res.get("data") if res and isinstance(res, dict) and "data" in res else []
-    # Fix: Ensure 'player' field is always a list for template logic
-    for s in streams:
-        if isinstance(s.get("player"), str):
-            s["player"] = [s["player"]]
-        elif s.get("player") is None:
-            s["player"] = []
+    entries = res.get("data") if res and isinstance(res, dict) and "data" in res else []
+    
+    publisher_map = {}
+    for entry in entries:
+        pub = entry.get("publisher")
+        player = entry.get("player")
+        desc = entry.get("description", "")
+        if pub not in publisher_map:
+            publisher_map[pub] = {"publisher": pub, "player": [], "description": desc}
+        if player:
+            if player not in publisher_map[pub]["player"]:
+                publisher_map[pub]["player"].append(player)
+    
+    streams = list(publisher_map.values())
     context = {
         'streams': streams,
         'srt_publish_port': settings.SRT_PUBLISH_PORT,
