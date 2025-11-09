@@ -74,6 +74,26 @@ def index(request):
     return render(request, 'index.html', context)
 
 @login_required(login_url='streams:login')
+def streams_status_json(request):
+    code, res = call_api('GET', '/api/stream-ids')
+    entries = res.get("data") if res and isinstance(res, dict) and "data" in res else []
+    publisher_map = {}
+    for entry in entries:
+        pub = entry.get("publisher")
+        player = entry.get("player")
+        desc = entry.get("description", "")
+        if not pub:
+            continue
+        if pub not in publisher_map:
+            publisher_map[pub] = {"publisher": pub, "player": [], "description": desc}
+        if desc:
+            publisher_map[pub]["description"] = desc
+        if player and player not in publisher_map[pub]["player"]:
+            publisher_map[pub]["player"].append(player)
+    streams = list(publisher_map.values())
+    return JsonResponse({"streams": streams})
+
+@login_required(login_url='streams:login')
 def sls_stats(request, player_key):
     try:
         url = f"http://{settings.SLS_DOMAIN_IP}:{settings.SLS_STATS_PORT}/stats/{player_key}"
@@ -109,13 +129,13 @@ def create_stream(request):
 @login_required(login_url='streams:login')
 def add_player(request):
     if request.method == "POST":
-        stream_id = request.POST.get("stream_id")
+        publisher_key = request.POST.get("publisher_key")
         player_key = request.POST.get("player_key")
         if not player_key:
             player_key = 'play_' + secrets.token_hex(16)
         description = request.POST.get("description", "")
         data = {
-            "publisher": stream_id,
+            "publisher": publisher_key,
             "player": player_key,
             "description": description,
         }
@@ -124,13 +144,15 @@ def add_player(request):
             return redirect('streams:index')
         else:
             return render(request, 'add_player.html', {'error': _("API error"), 'data': data})
+    publisher_key = request.GET.get("publisher_key", "")
+    return render(request, 'add_player.html', {"publisher_key": publisher_key})
 
 @login_required(login_url='streams:login')
-def delete_stream(request, play_key):
-    code, res = call_api('DELETE', f'/api/stream-ids/{play_key}')
+def delete_stream(request, player_key):
+    code, res = call_api('DELETE', f'/api/stream-ids/{player_key}')
     return redirect('streams:index')
 
 @login_required(login_url='streams:login')
-def delete_player(request, play_key):
-    code, res = call_api('DELETE', f'/api/stream-ids/{play_key}')
+def delete_player(request, player_key):
+    code, res = call_api('DELETE', f'/api/stream-ids/{player_key}')
     return redirect('streams:index')
