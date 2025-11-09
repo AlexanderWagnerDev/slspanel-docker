@@ -3,11 +3,11 @@ from streams.models import Configuration
 import os
 
 class Command(BaseCommand):
-    help = "Init oder update Erstkonfiguration aus ENV"
+    help = "Initial configuration or update from ENV"
 
     def handle(self, *args, **kwargs):
         lang = os.getenv("LANG", "en")
         conf, created = Configuration.objects.get_or_create(id=1)
         conf.language = lang
         conf.save()
-        self.stdout.write(self.style.SUCCESS(f"Konfig language={lang} gesetzt"))
+        self.stdout.write(self.style.SUCCESS(f"Config set language to {lang}"))
