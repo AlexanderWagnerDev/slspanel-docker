@@ -37,7 +37,7 @@
                             onclick="this.select();document.execCommand('copy');" title="{% trans 'Click to copy' %}">
                     </li>
                     <li>
-                        {% trans "SRT Player Port (Publisher)" %}:
+                        {% trans "SRT Player URL" %}:
                         <input type="text" readonly
                             value="srt://{{ sls_domain_ip }}:{{ srt_player_port }}?streamid={{ stream.publisher }}"
                             onclick="this.select();document.execCommand('copy');" title="{% trans 'Click to copy' %}">
@@ -53,12 +53,11 @@
                             <strong>{{ player }}</strong>
                             <form method="post" action="{% url 'streams:delete_player' player %}">
                                 {% csrf_token %}
-                                <button type="submit" class="btn btn-sm btn-danger">{% trans 'Delete' %}
-                                </button>
+                                <button type="submit" class="btn btn-sm btn-danger">{% trans 'Delete' %}</button>
                             </form>
                         </div>
                         <div class="mt-2">
-                            {% trans "Player URL" %}:
+                            {% trans "SRT Player URL" %}:
                             <input type="text" readonly
                                 value="srt://{{ sls_domain_ip }}:{{ srt_player_port }}?streamid={{ player }}"
                                 onclick="this.select();document.execCommand('copy');" title="{% trans 'Click to copy' %}"><br>
@@ -104,7 +103,6 @@
 async function updateStats(playerKey) {
     const container = document.getElementById('stats-' + playerKey);
     if (!container) return;
-
     try {
         const res = await fetch(`/sls-stats/${playerKey}/`);
         if (!res.ok) {
