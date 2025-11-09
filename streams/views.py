@@ -63,6 +63,10 @@ def index(request):
         if player and player not in publisher_map[pub]["player"]:
             publisher_map[pub]["player"].append(player)
     streams = list(publisher_map.values())
+
+    for s in streams:
+        s["main_player"] = s["player"][0] if s["player"] else None
+
     context = {
         'streams': streams,
         'srt_publish_port': settings.SRT_PUBLISH_PORT,
