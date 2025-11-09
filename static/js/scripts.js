@@ -18,7 +18,7 @@ function copyToClipboard(element) {
     navigator.clipboard.writeText(text).then(() => {
         const feedback = element.nextElementSibling;
         if(feedback) {
-            feedback.textContent = "{% trans 'Copied' %}";
+            feedback.textContent = window.translations.copiedText || "Copied";
             feedback.classList.add('visible');
             setTimeout(() => {
                 feedback.textContent = '';
