@@ -15,7 +15,12 @@
             <button class="accordion-button collapsed bg-dark text-light" type="button" data-bs-toggle="collapse"
                 data-bs-target="#collapse{{ forloop.counter }}" aria-expanded="false"
                 aria-controls="collapse{{ forloop.counter }}">
-                {{ stream.publisher }}
+                <span class="blur-text" tabindex="0" role="button" aria-label="{% trans 'Live Publisher Key' %}"
+                    onclick="copyToClipboard(this)" onkeyup="if(event.key==='Enter') copyToClipboard(this)"
+                    data-url="{{ stream.publisher }}">
+                    {{ stream.publisher }}
+                </span>
+                <span class="copy-feedback" aria-live="polite" aria-atomic="true"></span>
             </button>
         </h2>
         <div id="collapse{{ forloop.counter }}" class="accordion-collapse collapse"
@@ -66,7 +71,14 @@
                     {% for player in stream.player %}
                     <li class="list-group-item bg-secondary bg-opacity-20 d-flex flex-column">
                         <div class="d-flex justify-content-between align-items-center">
-                            <strong>{{ player }}</strong>
+                            <strong>
+                                <span class="blur-text" tabindex="0" role="button" aria-label="{% trans 'Player Key' %}"
+                                      data-url="{{ player }}" onclick="copyToClipboard(this)"
+                                      onkeyup="if(event.key==='Enter') copyToClipboard(this)">
+                                    {{ player }}
+                                </span>
+                                <span class="copy-feedback" aria-live="polite" aria-atomic="true"></span>
+                            </strong>
                             <form method="post" action="{% url 'streams:delete_player' player %}">
                                 {% csrf_token %}
                                 <button type="submit" class="btn btn-sm btn-danger">{% trans 'Delete' %}</button>
@@ -119,4 +131,3 @@
 {% else %}
 <p>{% trans 'No streams found' %}</p>
 {% endif %}
-{% endblock %}
