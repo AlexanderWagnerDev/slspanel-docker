@@ -154,12 +154,13 @@ def add_player(request):
                 'description': description,
             })
     publisher_key = request.GET.get("publisher_key", "")
+    player_key = 'play_' + secrets.token_hex(16)
     return render(request, 'add_player.html', {
         "publisher_key": publisher_key,
-        "player_key": "",
+        "player_key": player_key,
         "description": ""
     })
-
+    
 @login_required(login_url='streams:login')
 def delete_stream(request, player_key):
     code, res = call_api('DELETE', f'/api/stream-ids/{player_key}')
