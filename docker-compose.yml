@@ -1,13 +1,19 @@
 services:
   slspanel:
-    image: alexanderwagnerdev/slspanel:latest
+    image: alexanderwagnerdev/slspanel:beta
     container_name: slspanel
      restart: unless-stopped
     environment:
-      REACT_APP_BASE_URL: "${APP_URL}"
-      REACT_APP_SRT_PLAYER_PORT: "${SRT_PLAYER_PORT:-4000}"
-      REACT_APP_SRT_SENDER_PORT: "${SRT_SENDER_PORT:-4001}"
-      REACT_APP_SLS_STATS_PORT: "${SLS_STATS_PORT:-8080}"
-      REACT_APP_SRTLA_PORT: "${SRTLA_PORT:-5000}"
+      - LANG=en
+      - TZ=UTC
+      - SLS_API_URL=http://sls-api-url:8789
+      - SLS_API_KEY=yourapikey
+      - SRT_PUBLISH_PORT=4000
+      - SRT_PLAYER_PORT=4001
+      - SRTLA_PUBLISH_PORT=5000
+      - SLS_DOMAIN_IP=your-sls-domain-sls-domain-ip 
+      - SLS_STATS_PORT=8789
+      - WEB_USERNAME=admin
+      - WEB_PASSWORD=password
     ports:
-      - "${SLS_MGNT_PORT}:8000"
+      - "8000:8000/tcp"
