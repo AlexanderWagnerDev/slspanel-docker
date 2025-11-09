@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 {% load i18n %}
-{% block title %}{% trans "Streams" %}{% endblock %}
+{% block title %}{% trans "Streams on SLS-Live-Server" %}{% endblock %}
 
 {% block content %}
-<h1>{% trans 'Streams on SLS Live Server' %}</h1>
+<h1>{% trans 'Streams on SLS-Live-Server' %}</h1>
 <a class="btn btn-outline-light mb-3" href="{% url 'streams:logout' %}">{% trans 'Logout' %}</a>
 <a href="{% url 'streams:create_stream' %}" class="btn btn-success mb-3">{% trans 'Create Stream' %}</a>
 
