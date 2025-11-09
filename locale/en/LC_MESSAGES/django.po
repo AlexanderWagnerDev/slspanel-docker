@@ -21,8 +21,8 @@ msgstr "SRT Publish URL"
 msgid "SRTLA Publish URL"
 msgstr "SRTLA Publish URL"
 
-msgid "SRT Player Port (Publisher)"
-msgstr "SRT Player Port (Publisher)"
+msgid "SRT Player URL"
+msgstr "SRT Player URL"
 
 msgid "Stream Stats"
 msgstr "Stream Stats"
