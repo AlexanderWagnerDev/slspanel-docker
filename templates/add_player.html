@@ -6,7 +6,6 @@
 <h1>{% trans "Add Player to Stream" %}</h1>
 <form method="post">
     {% csrf_token %}
-    <label for="publisher_key">{% trans "Publisher Key" %}</label>
     <input type="hidden" id="publisher_key" name="publisher_key" value="{{ publisher_key|default:'' }}" required>
 
     <label for="player_key">{% trans "Player Key" %}</label>
