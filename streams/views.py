@@ -7,8 +7,8 @@ from django.http import JsonResponse
 import requests
 import secrets
 
-API_URL = settings.SLS_API_URL if hasattr(settings, 'SLS_API_URL') else 'http://localhost:8080'
-API_KEY = settings.SLS_API_KEY if hasattr(settings, 'SLS_API_KEY') else 'changeme'
+API_URL = settings.SLS_API_URL if hasattr(settings, 'SLS_API_URL') else 'http://localhost:8789'
+API_KEY = settings.SLS_API_KEY if hasattr(settings, 'SLS_API_KEY') else ''
 
 def login_view(request):
     error = None
