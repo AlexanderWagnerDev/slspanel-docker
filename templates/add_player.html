@@ -7,7 +7,7 @@
 <form method="post">
     {% csrf_token %}
     <label for="publisher_key">{% trans "Publisher Key" %}</label>
-    <input type="text" id="publisher_key" name="publisher_key" value="{{ publisher_key|default:'' }}" required>
+    <input type="hidden" id="publisher_key" name="publisher_key" value="{{ publisher_key|default:'' }}" required>
 
     <label for="player_key">{% trans "Player Key" %}</label>
     <input type="text" id="player_key" name="player_key" value="{{ player_key|default:'' }}" required>
