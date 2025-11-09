@@ -145,7 +145,7 @@ def add_player(request):
         else:
             return render(request, 'add_player.html', {'error': _("API error"), 'data': data})
     publisher_key = request.GET.get("publisher_key", "")
-    return render(request, 'add_player.html', {"publisher_key": publisher_key})
+    return render(request, 'add_player.html', {"publisher_key": publisher_key, "data": {}})
 
 @login_required(login_url='streams:login')
 def delete_stream(request, player_key):
