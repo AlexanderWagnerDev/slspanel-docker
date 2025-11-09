@@ -83,3 +83,12 @@ msgstr "RTT"
 
 msgid "Uptime"
 msgstr "Uptime"
+
+msgid "Publisher Key"
+msgstr "Publisher Key"
+
+msgid "Player Key"
+msgstr "Player Key"
+
+msgid "Description"
+msgstr "Description"
