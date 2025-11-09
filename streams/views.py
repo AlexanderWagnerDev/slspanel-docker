@@ -9,7 +9,6 @@ import secrets
 API_URL = settings.SLS_API_URL if hasattr(settings, 'SLS_API_URL') else 'http://localhost:8080'
 API_KEY = settings.SLS_API_KEY if hasattr(settings, 'SLS_API_KEY') else 'changeme'
 
-
 def login_view(request):
     error = None
     if request.method == 'POST':
@@ -47,10 +46,10 @@ def call_api(method, endpoint, data=None):
     except Exception as e:
         return None, str(e)
 
-
 @login_required(login_url='streams:login')
 def index(request):
     code, streams = call_api('GET', '/api/stream-ids')
+    streams = response.get("data") if response else []
     if streams is None:
         streams = []
     context = {
@@ -96,7 +95,6 @@ def create_stream(request):
             return render(request, 'create_stream.html', {'error': _("API error"), 'data': data})
     return render(request, 'create_stream.html')
 
-
 @login_required(login_url='streams:login')
 def add_player(request):
     if request.method == "POST":
@@ -116,12 +114,10 @@ def add_player(request):
         else:
             return render(request, 'add_player.html', {'error': _("API error"), 'data': data})
 
-
 @login_required(login_url='streams:login')
 def delete_stream(request, play_key):
     code, res = call_api('DELETE', f'/api/stream-ids/{play_key}')
     return redirect('streams:index')
-
 
 @login_required(login_url='streams:login')
 def delete_player(request, play_key):
