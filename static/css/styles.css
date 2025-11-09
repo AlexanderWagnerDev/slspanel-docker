@@ -12,6 +12,30 @@ body.dark {
 .btn-primary, .btn-success, .btn-danger {
     border: none;
 }
+.blur-text {
+    filter: blur(4px);
+    cursor: pointer;
+    transition: filter 0.3s ease;
+    user-select: none;
+    padding: 2px 4px;
+    border-radius: 4px;
+    display: inline-block;
+}
+.blur-text:focus,
+.blur-text:hover {
+    filter: none;
+    user-select: text;
+    outline: none;
+}
+.copy-feedback {
+    color: limegreen;
+    margin-left: 8px;
+    font-weight: bold;
+    display: none;
+}
+.copy-feedback.visible {
+    display: inline;
+}
 .copy-text {
     display: inline-block;
     filter: blur(3px);
