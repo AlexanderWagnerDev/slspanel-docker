@@ -143,9 +143,18 @@ def add_player(request):
         if code and 200 <= code < 300:
             return redirect('streams:index')
         else:
-            return render(request, 'add_player.html', {'error': _("API error"), 'data': data})
+            return render(request, 'add_player.html', {
+                'error': _("API error"),
+                'publisher_key': publisher_key,
+                'player_key': player_key,
+                'description': description,
+            })
     publisher_key = request.GET.get("publisher_key", "")
-    return render(request, 'add_player.html', {"publisher_key": publisher_key, "data": {}})
+    return render(request, 'add_player.html', {
+        "publisher_key": publisher_key,
+        "player_key": "",
+        "description": ""
+    })
 
 @login_required(login_url='streams:login')
 def delete_stream(request, player_key):
