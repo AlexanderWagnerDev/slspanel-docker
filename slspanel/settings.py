@@ -9,8 +9,8 @@ DEBUG = os.getenv("DJANGO_DEBUG", "True").lower() == "true"
 
 ALLOWED_HOSTS = ["*"]
 
-USERNAME = os.getenv('WEB_USERNAME', 'admin')
-PASSWORD = os.getenv('WEB_PASSWORD', 'password')
+USERNAME = os.getenv('USERNAME', 'admin')
+PASSWORD = os.getenv('PASSWORD', 'password')
 
 SRT_PUBLISH_PORT = int(os.getenv("SRT_PUBLISH_PORT", 4000))
 SRT_PLAYER_PORT = int(os.getenv("SRT_PLAYER_PORT", 4001))
@@ -19,7 +19,7 @@ SLS_DOMAIN_IP = os.getenv("SLS_DOMAIN_IP", "localhost")
 SLS_STATS_PORT = int(os.getenv("SLS_STATS_PORT", 8789))
 
 SLS_API_URL = os.getenv("SLS_API_URL", "http://localhost:8789")
-SLS_API_KEY =os.getenv("SLS_API_KEY", "")
+SLS_API_KEY = os.getenv("SLS_API_KEY", "")
 
 USE_I18N = True
 USE_L10N = True
