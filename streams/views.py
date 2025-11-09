@@ -6,8 +6,8 @@ from django.conf import settings
 import requests
 import secrets
 
-API_URL = settings.STREAMS_API_URL if hasattr(settings, 'STREAMS_API_URL') else 'http://localhost:8080'
-API_KEY = settings.STREAMS_API_KEY if hasattr(settings, 'STREAMS_API_KEY') else 'changeme'
+API_URL = settings.SLS_API_URL if hasattr(settings, 'SLS_API_URL') else 'http://localhost:8080'
+API_KEY = settings.SLS_API_KEY if hasattr(settings, 'SLS_API_KEY') else 'changeme'
 
 
 def login_view(request):
@@ -66,7 +66,7 @@ def index(request):
 @login_required(login_url='streams:login')
 def sls_stats(request, player_key):
     try:
-        url = f"http://{settings.SLS_DOMAIN_IP}:{settings.SLS_STATS_PORT}/stats/{player_key}"
+        url = f"http://{settings.SLS_STATS_DOMAIN_IP}:{settings.SLS_STATS_PORT}/stats/{player_key}"
         response = requests.get(url, timeout=3)
         response.raise_for_status()
         data = response.json()
@@ -126,5 +126,4 @@ def delete_stream(request, play_key):
 @login_required(login_url='streams:login')
 def delete_player(request, play_key):
     code, res = call_api('DELETE', f'/api/stream-ids/{play_key}')
-
     return redirect('streams:index')
