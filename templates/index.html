@@ -54,15 +54,6 @@
                         </span>
                         <span class="copy-feedback" aria-live="polite" aria-atomic="true"></span>
                     </li>
-                    <li>
-                        {% trans "SRT Player URL" %}:
-                        <span class="copy-text" tabindex="0" role="button" aria-label="{% trans 'Copy SRT Player URL' %}"
-                              data-url="srt://{{ sls_domain_ip }}:{{ srt_player_port }}?streamid={{ stream.publisher }}"
-                              onclick="copyToClipboard(this)" onkeyup="if(event.key==='Enter') copyToClipboard(this)">
-                            srt://{{ sls_domain_ip }}:{{ srt_player_port }}?streamid={{ stream.publisher }}
-                        </span>
-                        <span class="copy-feedback" aria-live="polite" aria-atomic="true"></span>
-                    </li>
                 </ul>
 
                 <h5>{% trans 'Players' %}</h5>
