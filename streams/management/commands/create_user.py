@@ -6,11 +6,6 @@ class Command(BaseCommand):
     help = "Create User from ENV"
 
     def handle(self, *args, **kwargs):
-        require_login = os.getenv('REQUIRE_LOGIN', 'True').lower() in ['true', '1', 'yes']
-        if not require_login:
-            self.stdout.write(self.style.WARNING("Login is disabled via REQUIRE_LOGIN. No user will be created."))
-            return
-
         username = os.getenv("WEB_USERNAME", "admin")
         password = os.getenv("WEB_PASSWORD", "password")
         if not User.objects.filter(username=username).exists():
