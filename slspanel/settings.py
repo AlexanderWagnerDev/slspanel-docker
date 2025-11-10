@@ -5,11 +5,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "")
 
-DEBUG = os.getenv("DJANGO_DEBUG", "True").lower() == "true"
+DEBUG = os.getenv('DJANGO_DEBUG', 'True').lower() in ['true', '1', 'yes']
 
 ALLOWED_HOSTS = ["*"]
 
-REQUIRE_LOGIN = os.getenv('REQUIRE_LOGIN', 'True') == 'True'
+REQUIRE_LOGIN = os.getenv('REQUIRE_LOGIN', 'True').lower() in ['true', '1', 'yes']
 
 USERNAME = os.getenv('USERNAME', 'admin')
 PASSWORD = os.getenv('PASSWORD', 'password')
