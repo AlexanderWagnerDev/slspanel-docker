@@ -15,15 +15,34 @@ document.addEventListener('DOMContentLoaded', function(){
 });
 function copyToClipboard(element) {
     const text = element.getAttribute('data-url');
-    navigator.clipboard.writeText(text).then(() => {
-        const feedback = element.nextElementSibling;
-        if(feedback) {
-            feedback.textContent = window.translations.copiedText || "Copied";
-            feedback.classList.add('visible');
-            setTimeout(() => {
-                feedback.textContent = '';
-                feedback.classList.remove('visible');
-            }, 2000);
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(() => {
+            showCopyFeedback(element);
+        });
+    } else {
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-9999px';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        try {
+            document.execCommand('copy');
+            showCopyFeedback(element);
+        } finally {
+            document.body.removeChild(textArea);
         }
-    });
+    }
+}
+function showCopyFeedback(element) {
+    const feedback = element.nextElementSibling;
+    if(feedback) {
+        feedback.textContent = window.translations.copiedText || "Copied";
+        feedback.classList.add('visible');
+        setTimeout(() => {
+            feedback.textContent = '';
+            feedback.classList.remove('visible');
+        }, 2000);
+    }
 }
