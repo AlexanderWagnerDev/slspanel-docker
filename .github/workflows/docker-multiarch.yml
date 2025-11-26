@@ -40,6 +40,6 @@ jobs:
           push: true
           tags: |
             alexanderwagnerdev/slspanel:latest
-            alexanderwagnerdev/slspanel:v0.0.4
+            alexanderwagnerdev/slspanel:v0.0.5
             ghcr.io/alexanderwagnerdev/slspanel:latest
-            ghcr.io/alexanderwagnerdev/slspanel:v0.0.4
+            ghcr.io/alexanderwagnerdev/slspanel:v0.0.5
