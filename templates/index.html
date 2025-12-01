@@ -43,14 +43,14 @@
                               onclick="copyToClipboard(this)" onkeyup="if(event.key==='Enter') copyToClipboard(this)">
                             srt://{{ sls_domain_ip }}:{{ srt_publish_port }}?streamid={{ stream.publisher }}
                         </span>
-                        <span class="copy-feedback"></span>
+                        <span class="copy-feedback"></span><br>
                         <strong>{% trans "SRTLA Publish URL" %}:</strong>
                         <span class="blur-text" tabindex="0" role="button"
                               data-url="srtla://{{ sls_domain_ip }}:{{ srtla_publish_port }}?streamid={{ stream.publisher }}"
                               onclick="copyToClipboard(this)" onkeyup="if(event.key==='Enter') copyToClipboard(this)">
                             srtla://{{ sls_domain_ip }}:{{ srtla_publish_port }}?streamid={{ stream.publisher }}
                         </span>
-                        <span class="copy-feedback"></span>
+                        <span class="copy-feedback"></span><br>
 
                 <h5>{% trans 'Players' %}</h5>
                 {% if stream.player %}
@@ -73,14 +73,12 @@
                         </div>
                         <div class="mt-2">
                             {% if player.description %}
-                            <div>
                             <strong>{% trans "Description" %}:</strong>
                             <span tabindex="0" role="button" data-url="{{ player.description }}"
                             onclick="copyToClipboard(this)" onkeyup="if(event.key==='Enter') copyToClipboard(this)">
                             {{ player.description }}
                             </span>
-                            <span class="copy-feedback"></span>
-                            </div>
+                            <span class="copy-feedback"></span>Stream Publish URLs
                             {% endif %}
                             <strong>{% trans "Player URL" %}:</strong>
                             <span class="blur-text" tabindex="0" role="button"
