@@ -36,7 +36,7 @@
             data-bs-parent="#streamAccordion">
             <div class="accordion-body">
 
-                <h5>{% trans 'Stream Publish URLs' %}</h5>
+                <h5>{% trans 'Stream Publish URLs' %}</h5><br>
                         <strong>{% trans "SRT Publish URL" %}:</strong>
                         <span class="blur-text" tabindex="0" role="button"
                               data-url="srt://{{ sls_domain_ip }}:{{ srt_publish_port }}?streamid={{ stream.publisher }}"
@@ -50,9 +50,9 @@
                               onclick="copyToClipboard(this)" onkeyup="if(event.key==='Enter') copyToClipboard(this)">
                             srtla://{{ sls_domain_ip }}:{{ srtla_publish_port }}?streamid={{ stream.publisher }}
                         </span>
-                        <span class="copy-feedback"></span><br>
+                        <span class="copy-feedback"></span><br><br>
 
-                <h5>{% trans 'Players' %}</h5>
+                <h5>{% trans 'Players' %}</h5><br>
                 {% if stream.player %}
                 <ul class="list-group list-group-flush">
                     {% for player in stream.player %}
@@ -78,7 +78,7 @@
                             onclick="copyToClipboard(this)" onkeyup="if(event.key==='Enter') copyToClipboard(this)">
                             {{ player.description }}
                             </span>
-                            <span class="copy-feedback"></span>Stream Publish URLs
+                            <span class="copy-feedback"></span><br>>
                             {% endif %}
                             <strong>{% trans "Player URL" %}:</strong>
                             <span class="blur-text" tabindex="0" role="button"
