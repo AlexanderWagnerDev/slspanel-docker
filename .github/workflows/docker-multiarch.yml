@@ -36,10 +36,9 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          platforms: linux/amd64,linux/arm64/v8,linux/riscv64,linux/386,linux/s390x,linux/arm/v7,linux/arm/v6,linux/ppc64le
+          platforms: linux/amd64
+          #,linux/arm64/v8,linux/riscv64,linux/386,linux/s390x,linux/arm/v7,linux/arm/v6,linux/ppc64le
           push: true
           tags: |
-            alexanderwagnerdev/slspanel:latest
-            alexanderwagnerdev/slspanel:v0.0.5
-            ghcr.io/alexanderwagnerdev/slspanel:latest
-            ghcr.io/alexanderwagnerdev/slspanel:v0.0.5
+            alexanderwagnerdev/slspanel:beta
+            ghcr.io/alexanderwagnerdev/slspanel:beta
