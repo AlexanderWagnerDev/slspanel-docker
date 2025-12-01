@@ -21,7 +21,7 @@
                 </span>
                 <span class="copy-feedback"></span>
                 {% if stream.main_description %}
-                    <strong>{% trans "Description" %}:</strong>
+                    <strong>{% trans "Description" %}: </strong>
                     <span tabindex="0" role="button" data-url="{{ stream.main_description }}"
                     onclick="copyToClipboard(this)" onkeyup="if(event.key==='Enter') copyToClipboard(this)">
                     {{ stream.main_description }}
