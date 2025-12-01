@@ -20,21 +20,20 @@
                     {{ stream.publisher }}
                 </span>
                 <span class="copy-feedback" ></span>
-                {% if stream.description %}
-                <div class="mb-2">
-                    {{ stream.description }}
-                    <span class="" tabindex="0" role="button"
-                              data-url="{{ stream.description }}"
-                              onclick="copyToClipboard(this)" onkeyup="if(event.key==='Enter') copyToClipboard(this)">
-                            {{ stream.description }}
-                        </span>
-                        <span class="copy-feedback"></span>
-                </div>
+                {% if stream.main_description %}
+                    <div class="mb-2">
+                    <strong>{% trans "Description" %}:</strong> {{ stream.main_description }}
+                    <span tabindex="0" role="button" data-url="{{ stream.main_description }}"
+                    onclick="copyToClipboard(this)" onkeyup="if(event.key==='Enter') copyToClipboard(this)">
+                    {{ stream.main_description }}
+                    </span>
+                    <span class="copy-feedback"></span>
+                    </div>
                 {% endif %}
             </button>
         </h2>
         <div id="collapse{{ forloop.counter }}" class="accordion-collapse collapse"
-            aria-labelledby="heading{{ forloop.counter }}" data-bs-parent="#streamAccordion">
+            data-bs-parent="#streamAccordion">
             <div class="accordion-body">
 
                 <h5>{% trans 'Stream URLs' %}</h5>
@@ -64,54 +63,54 @@
                 <ul class="list-group list-group-flush">
                     {% for player in stream.player %}
                     <li class="list-group-item bg-secondary bg-opacity-20 d-flex flex-column">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <strong>
-                                <span class="blur-text" tabindex="0" role="button"
-                                      data-url="{{ player }}" onclick="copyToClipboard(this)"
-                                      onkeyup="if(event.key==='Enter') copyToClipboard(this)">
-                                    {{ player }}
-                                </span>
-                                <span class="copy-feedback"></span>
-                            </strong>
-                            <form method="post" action="{% url 'streams:delete_player' player %}">
+                    <div class="d-flex justify-content-between align-items-center">
+                    <strong>
+                    <span class="blur-text" tabindex="0" role="button"
+                    data-url="{{ player.key }}" onclick="copyToClipboard(this)"
+                    onkeyup="if(event.key==='Enter') copyToClipboard(this)">
+                    {{ player.key }}
+                    </span>
+                    <span class="copy-feedback"></span>
+                    </strong>
+                            <form method="post" action="{% url 'streams:delete_player' player.key %}">
                                 {% csrf_token %}
                                 <button type="submit" class="btn btn-sm btn-danger">{% trans 'Delete' %}</button>
                             </form>
                         </div>
                         <div class="mt-2">
-                            {% if description %}
-                                <div class="mb-2">
-                                <span class="" tabindex="0" role="button"
-                                data-url="{{ description }}"
-                                onclick="copyToClipboard(this)" onkeyup="if(event.key==='Enter') copyToClipboard(this)">
-                                {{ description }}
-                                </span>
-                                <span class="copy-feedback"></span>
-                                </div>
+                            {% if player.description %}
+                            <div class="mt-1 small text-muted">
+                            <strong>{{ player.description }}</strong>
+                            <span tabindex="0" role="button" data-url="{{ player.description }}"
+                            onclick="copyToClipboard(this)" onkeyup="if(event.key==='Enter') copyToClipboard(this)">
+                            {{ player.description }}
+                            </span>
+                            <span class="copy-feedback"></span>
+                            </div>
                             {% endif %}
                             {% trans "Player URL" %}:
                             <span class="blur-text" tabindex="0" role="button"
-                                  data-url="srt://{{ sls_domain_ip }}:{{ srt_player_port }}?streamid={{ player }}"
+                                  data-url="srt://{{ sls_domain_ip }}:{{ srt_player_port }}?streamid={{ player.key }}"
                                   onclick="copyToClipboard(this)" onkeyup="if(event.key==='Enter') copyToClipboard(this)">
-                                srt://{{ sls_domain_ip }}:{{ srt_player_port }}?streamid={{ player }}
+                                srt://{{ sls_domain_ip }}:{{ srt_player_port }}?streamid={{ player.key }}
                             </span>
                             <span class="copy-feedback"></span><br>
                             {% trans "Stats URL" %}:
                             <span class="blur-text" tabindex="0" role="button"
-                                  data-url="http://{{ sls_domain_ip }}:{{ sls_stats_port }}/stats/{{ player }}"
+                                  data-url="http://{{ sls_domain_ip }}:{{ sls_stats_port }}/stats/{{ player.key }}"
                                   onclick="copyToClipboard(this)" onkeyup="if(event.key==='Enter') copyToClipboard(this)">
-                                http://{{ sls_domain_ip }}:{{ sls_stats_port }}/stats/{{ player }}
+                                http://{{ sls_domain_ip }}:{{ sls_stats_port }}/stats/{{ player.key }}
                             </span>
                             <span class="copy-feedback"></span><br>
                             {% trans "Stats Legacy URL" %}:
                             <span class="blur-text" tabindex="0" role="button"
-                                  data-url="http://{{ sls_domain_ip }}:{{ sls_stats_port }}/stats/{{ player }}?legacy=1"
+                                  data-url="http://{{ sls_domain_ip }}:{{ sls_stats_port }}/stats/{{ player.key }}?legacy=1"
                                   onclick="copyToClipboard(this)" onkeyup="if(event.key==='Enter') copyToClipboard(this)">
-                                http://{{ sls_domain_ip }}:{{ sls_stats_port }}/stats/{{ player }}?legacy=1
+                                http://{{ sls_domain_ip }}:{{ sls_stats_port }}/stats/{{ player.key }}?legacy=1
                             </span>
                             <span class="copy-feedback"></span>
                         </div>
-                        <div id="stats-{{ player }}" data-player-key="{{ player }}">
+                        <div id="stats-{{ player }}" data-player-key="{{ player.key }}">
                             <p>{% trans 'Loading stats...' %}</p>
                         </div>
                     </li>
