@@ -15,7 +15,7 @@ RUN /bin/sh -c "source /venv/bin/activate && pip install --upgrade pip && pip in
 
 ENV PATH="/venv/bin:$PATH"
 
-FROM alexanderwagnerdev/alpine:autoupdate-stable
+FROM alexanderwagnerdev/alpine:latest
 
 RUN apk update && \
     apk upgrade && \
