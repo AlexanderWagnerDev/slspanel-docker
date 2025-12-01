@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   slspanel:
     image: alexanderwagnerdev/slspanel:beta
@@ -10,8 +8,8 @@ services:
       - TZ=UTC
       - SLS_API_URL=http://sls-api-url:8789
       - SLS_API_KEY=yourapikey
-      - SRT_PUBLISH_PORT=4000
-      - SRT_PLAYER_PORT=4001
+      - SRT_PUBLISH_PORT=4001
+      - SRT_PLAYER_PORT=4000
       - SRTLA_PUBLISH_PORT=5000
       - SLS_DOMAIN_IP=your-sls-domain-sls-domain-ip
       - SLS_STATS_PORT=8789
