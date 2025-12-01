@@ -19,7 +19,7 @@ FROM alexanderwagnerdev/alpine:latest
 
 RUN apk update && \
     apk upgrade && \
-    apk add --no-cache python3 py3-pip tzdata && \
+    apk add --no-cache python3 tzdata && \
     rm -rf /var/cache/apk/*
 
 WORKDIR /app
