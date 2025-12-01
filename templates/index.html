@@ -21,7 +21,7 @@
                 </span>
                 <span class="copy-feedback" ></span>
                 {% if stream.main_description %}
-                    <div class="mb-2">
+                    <div>
                     <strong>{% trans "Description" %}:</strong>
                     <span tabindex="0" role="button" data-url="{{ stream.main_description }}"
                     onclick="copyToClipboard(this)" onkeyup="if(event.key==='Enter') copyToClipboard(this)">
@@ -36,27 +36,21 @@
             data-bs-parent="#streamAccordion">
             <div class="accordion-body">
 
-                <h5>{% trans 'Stream URLs' %}</h5>
-                <ul>
-                    <li>
-                        {% trans "SRT Publish URL" %}:
+                <h5>{% trans 'Stream Publish URLs' %}</h5>
+                        <strong>{% trans "SRT Publish URL" %}:</strong>
                         <span class="blur-text" tabindex="0" role="button"
                               data-url="srt://{{ sls_domain_ip }}:{{ srt_publish_port }}?streamid={{ stream.publisher }}"
                               onclick="copyToClipboard(this)" onkeyup="if(event.key==='Enter') copyToClipboard(this)">
                             srt://{{ sls_domain_ip }}:{{ srt_publish_port }}?streamid={{ stream.publisher }}
                         </span>
                         <span class="copy-feedback"></span>
-                    </li>
-                    <li>
-                        {% trans "SRTLA Publish URL" %}:
+                        <strong>{% trans "SRTLA Publish URL" %}:</strong>
                         <span class="blur-text" tabindex="0" role="button"
                               data-url="srtla://{{ sls_domain_ip }}:{{ srtla_publish_port }}?streamid={{ stream.publisher }}"
                               onclick="copyToClipboard(this)" onkeyup="if(event.key==='Enter') copyToClipboard(this)">
                             srtla://{{ sls_domain_ip }}:{{ srtla_publish_port }}?streamid={{ stream.publisher }}
                         </span>
                         <span class="copy-feedback"></span>
-                    </li>
-                </ul>
 
                 <h5>{% trans 'Players' %}</h5>
                 {% if stream.player %}
@@ -79,7 +73,7 @@
                         </div>
                         <div class="mt-2">
                             {% if player.description %}
-                            <div class="mt-1 small text-muted">
+                            <div>
                             <strong>{% trans "Description" %}:</strong>
                             <span tabindex="0" role="button" data-url="{{ player.description }}"
                             onclick="copyToClipboard(this)" onkeyup="if(event.key==='Enter') copyToClipboard(this)">
@@ -88,21 +82,21 @@
                             <span class="copy-feedback"></span>
                             </div>
                             {% endif %}
-                            {% trans "Player URL" %}:
+                            <strong>{% trans "Player URL" %}:</strong>
                             <span class="blur-text" tabindex="0" role="button"
                                   data-url="srt://{{ sls_domain_ip }}:{{ srt_player_port }}?streamid={{ player.key }}"
                                   onclick="copyToClipboard(this)" onkeyup="if(event.key==='Enter') copyToClipboard(this)">
                                 srt://{{ sls_domain_ip }}:{{ srt_player_port }}?streamid={{ player.key }}
                             </span>
                             <span class="copy-feedback"></span><br>
-                            {% trans "Stats URL" %}:
+                            <strong>{% trans "Stats URL" %}:</strong>
                             <span class="blur-text" tabindex="0" role="button"
                                   data-url="http://{{ sls_domain_ip }}:{{ sls_stats_port }}/stats/{{ player.key }}"
                                   onclick="copyToClipboard(this)" onkeyup="if(event.key==='Enter') copyToClipboard(this)">
                                 http://{{ sls_domain_ip }}:{{ sls_stats_port }}/stats/{{ player.key }}
                             </span>
                             <span class="copy-feedback"></span><br>
-                            {% trans "Stats Legacy URL" %}:
+                            <strong>{% trans "Stats Legacy URL" %}:</strong>
                             <span class="blur-text" tabindex="0" role="button"
                                   data-url="http://{{ sls_domain_ip }}:{{ sls_stats_port }}/stats/{{ player.key }}?legacy=1"
                                   onclick="copyToClipboard(this)" onkeyup="if(event.key==='Enter') copyToClipboard(this)">
@@ -110,7 +104,7 @@
                             </span>
                             <span class="copy-feedback"></span>
                         </div>
-                        <div id="stats-{{ player }}" data-player-key="{{ player.key }}">
+                        <div id="stats-{{ player.key }}" data-player-key="{{ player.key }}">
                             <p>{% trans 'Loading stats...' %}</p>
                         </div>
                     </li>
