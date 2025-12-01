@@ -28,30 +28,6 @@ body.dark {
     outline: none;
 }
 .copy-feedback {
-    color: limegreen;
-    margin-left: 8px;
-    font-weight: bold;
-    display: none;
-}
-.copy-feedback.visible {
-    display: inline;
-}
-.copy-text {
-    display: inline-block;
-    filter: blur(3px);
-    user-select: none;
-    cursor: pointer;
-    padding: 2px 4px;
-    border-radius: 4px;
-    transition: filter 0.3s ease;
-}
-.copy-text:focus,
-.copy-text:hover {
-    filter: none;
-    user-select: text;
-    outline: none;
-}
-.copy-feedback {
     color: green;
     margin-left: 8px;
     font-weight: bold;
