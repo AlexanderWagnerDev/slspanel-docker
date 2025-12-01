@@ -22,11 +22,11 @@
                 <span class="copy-feedback" ></span>
                 {% if stream.player.description %}
                 <div class="mb-2">
-                    {{ stream.player.description }}
+                    {{ stream.description }}
                     <span class="" tabindex="0" role="button"
-                              data-url="{{ stream.player.description }}"
+                              data-url="{{ stream.description }}"
                               onclick="copyToClipboard(this)" onkeyup="if(event.key==='Enter') copyToClipboard(this)">
-                            {{ stream.player.description }}
+                            {{ stream.description }}
                         </span>
                         <span class="copy-feedback"></span>
                 </div>
@@ -79,12 +79,12 @@
                             </form>
                         </div>
                         <div class="mt-2">
-                            {% if player.description %}
+                            {% if description %}
                                 <div class="mb-2">
                                 <span class="" tabindex="0" role="button"
-                                data-url="{{ player.description }}"
+                                data-url="{{ description }}"
                                 onclick="copyToClipboard(this)" onkeyup="if(event.key==='Enter') copyToClipboard(this)">
-                                {{ player.description }}
+                                {{ description }}
                                 </span>
                                 <span class="copy-feedback"></span>
                                 </div>

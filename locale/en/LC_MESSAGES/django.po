@@ -98,3 +98,6 @@ msgstr "Description"
 
 msgid "Copied"
 msgstr "Copied"
+
+msgid "Create"
+msgstr "Create"

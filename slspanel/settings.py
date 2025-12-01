@@ -14,8 +14,8 @@ REQUIRE_LOGIN = os.getenv('REQUIRE_LOGIN', 'False').lower() in ['true', '1', 'ye
 USERNAME = os.getenv('USERNAME', 'admin')
 PASSWORD = os.getenv('PASSWORD', 'password')
 
-SRT_PUBLISH_PORT = int(os.getenv("SRT_PUBLISH_PORT", 4000))
-SRT_PLAYER_PORT = int(os.getenv("SRT_PLAYER_PORT", 4001))
+SRT_PUBLISH_PORT = int(os.getenv("SRT_PUBLISH_PORT", 4001))
+SRT_PLAYER_PORT = int(os.getenv("SRT_PLAYER_PORT", 4000))
 SRTLA_PUBLISH_PORT = int(os.getenv("SRTLA_PUBLISH_PORT", 5000))
 SLS_DOMAIN_IP = os.getenv("SLS_DOMAIN_IP", "localhost")
 SLS_STATS_PORT = int(os.getenv("SLS_STATS_PORT", 8789))
