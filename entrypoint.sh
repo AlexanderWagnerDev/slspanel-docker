@@ -3,4 +3,5 @@ export DJANGO_SECRET_KEY=$(python3 -c "from django.core.management.utils import 
 python3 manage.py migrate --noinput
 python3 manage.py create_user
 python3 manage.py initconfig
+crond -f -l 2 &
 exec gunicorn --bind 0.0.0.0:8000 slspanel.wsgi:application
