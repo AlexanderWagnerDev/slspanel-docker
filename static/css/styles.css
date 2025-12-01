@@ -16,6 +16,7 @@ body.dark {
     filter: blur(4px);
     cursor: pointer;
     transition: filter 0.3s ease;
+    -webkit-user-select: none;
     user-select: none;
     padding: 2px 4px;
     border-radius: 4px;
@@ -24,7 +25,8 @@ body.dark {
 .blur-text:focus,
 .blur-text:hover {
     filter: none;
-    user-select: text;
+    -webkit-user-select: none;
+    user-select: none;
     outline: none;
 }
 .copy-feedback {
