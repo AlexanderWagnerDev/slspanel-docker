@@ -13,23 +13,22 @@
     <div class="accordion-item bg-dark">
         <h2 class="accordion-header" id="heading{{ forloop.counter }}">
             <button class="accordion-button collapsed bg-dark text-light" type="button" data-bs-toggle="collapse"
-                data-bs-target="#collapse{{ forloop.counter }}" aria-expanded="false"
-                aria-controls="collapse{{ forloop.counter }}">
-                <span class="blur-text" tabindex="0" role="button" aria-label="{% trans 'Live Publisher Key' %}"
+                data-bs-target="#collapse{{ forloop.counter }}">
+                <span class="blur-text" tabindex="0" role="button"
                     onclick="copyToClipboard(this)" onkeyup="if(event.key==='Enter') copyToClipboard(this)"
                     data-url="{{ stream.publisher }}">
                     {{ stream.publisher }}
                 </span>
-                <span class="copy-feedback" aria-live="polite" aria-atomic="true"></span>
+                <span class="copy-feedback" ></span>
                 {% if stream.player.description %}
                 <div class="mb-2">
                     {{ stream.player.description }}
-                    <span class="" tabindex="0" role="button" aria-label="{% trans 'Copy Description' %}"
+                    <span class="" tabindex="0" role="button"
                               data-url="{{ stream.player.description }}"
                               onclick="copyToClipboard(this)" onkeyup="if(event.key==='Enter') copyToClipboard(this)">
                             {{ stream.player.description }}
                         </span>
-                        <span class="copy-feedback" aria-live="polite" aria-atomic="true"></span>
+                        <span class="copy-feedback"></span>
                 </div>
                 {% endif %}
             </button>
@@ -42,21 +41,21 @@
                 <ul>
                     <li>
                         {% trans "SRT Publish URL" %}:
-                        <span class="blur-text" tabindex="0" role="button" aria-label="{% trans 'Copy SRT Publish URL' %}"
+                        <span class="blur-text" tabindex="0" role="button"
                               data-url="srt://{{ sls_domain_ip }}:{{ srt_publish_port }}?streamid={{ stream.publisher }}"
                               onclick="copyToClipboard(this)" onkeyup="if(event.key==='Enter') copyToClipboard(this)">
                             srt://{{ sls_domain_ip }}:{{ srt_publish_port }}?streamid={{ stream.publisher }}
                         </span>
-                        <span class="copy-feedback" aria-live="polite" aria-atomic="true"></span>
+                        <span class="copy-feedback"></span>
                     </li>
                     <li>
                         {% trans "SRTLA Publish URL" %}:
-                        <span class="blur-text" tabindex="0" role="button" aria-label="{% trans 'Copy SRTLA Publish URL' %}"
+                        <span class="blur-text" tabindex="0" role="button"
                               data-url="srtla://{{ sls_domain_ip }}:{{ srtla_publish_port }}?streamid={{ stream.publisher }}"
                               onclick="copyToClipboard(this)" onkeyup="if(event.key==='Enter') copyToClipboard(this)">
                             srtla://{{ sls_domain_ip }}:{{ srtla_publish_port }}?streamid={{ stream.publisher }}
                         </span>
-                        <span class="copy-feedback" aria-live="polite" aria-atomic="true"></span>
+                        <span class="copy-feedback"></span>
                     </li>
                 </ul>
 
@@ -67,12 +66,12 @@
                     <li class="list-group-item bg-secondary bg-opacity-20 d-flex flex-column">
                         <div class="d-flex justify-content-between align-items-center">
                             <strong>
-                                <span class="blur-text" tabindex="0" role="button" aria-label="{% trans 'Player Key' %}"
+                                <span class="blur-text" tabindex="0" role="button"
                                       data-url="{{ player }}" onclick="copyToClipboard(this)"
                                       onkeyup="if(event.key==='Enter') copyToClipboard(this)">
                                     {{ player }}
                                 </span>
-                                <span class="copy-feedback" aria-live="polite" aria-atomic="true"></span>
+                                <span class="copy-feedback"></span>
                             </strong>
                             <form method="post" action="{% url 'streams:delete_player' player %}">
                                 {% csrf_token %}
@@ -82,35 +81,35 @@
                         <div class="mt-2">
                             {% if player.description %}
                                 <div class="mb-2">
-                                <span class="" tabindex="0" role="button" aria-label="{% trans 'Copy Description' %}"
+                                <span class="" tabindex="0" role="button"
                                 data-url="{{ player.description }}"
                                 onclick="copyToClipboard(this)" onkeyup="if(event.key==='Enter') copyToClipboard(this)">
                                 {{ player.description }}
                                 </span>
-                                <span class="copy-feedback" aria-live="polite" aria-atomic="true"></span>
+                                <span class="copy-feedback"></span>
                                 </div>
                             {% endif %}
                             {% trans "Player URL" %}:
-                            <span class="blur-text" tabindex="0" role="button" aria-label="{% trans 'Copy Player URL' %}"
+                            <span class="blur-text" tabindex="0" role="button"
                                   data-url="srt://{{ sls_domain_ip }}:{{ srt_player_port }}?streamid={{ player }}"
                                   onclick="copyToClipboard(this)" onkeyup="if(event.key==='Enter') copyToClipboard(this)">
                                 srt://{{ sls_domain_ip }}:{{ srt_player_port }}?streamid={{ player }}
                             </span>
-                            <span class="copy-feedback" aria-live="polite" aria-atomic="true"></span><br>
+                            <span class="copy-feedback"></span><br>
                             {% trans "Stats URL" %}:
-                            <span class="blur-text" tabindex="0" role="button" aria-label="{% trans 'Copy Stats URL' %}"
+                            <span class="blur-text" tabindex="0" role="button"
                                   data-url="http://{{ sls_domain_ip }}:{{ sls_stats_port }}/stats/{{ player }}"
                                   onclick="copyToClipboard(this)" onkeyup="if(event.key==='Enter') copyToClipboard(this)">
                                 http://{{ sls_domain_ip }}:{{ sls_stats_port }}/stats/{{ player }}
                             </span>
-                            <span class="copy-feedback" aria-live="polite" aria-atomic="true"></span><br>
+                            <span class="copy-feedback"></span><br>
                             {% trans "Stats Legacy URL" %}:
-                            <span class="blur-text" tabindex="0" role="button" aria-label="{% trans 'Copy Stats Legacy URL' %}"
+                            <span class="blur-text" tabindex="0" role="button"
                                   data-url="http://{{ sls_domain_ip }}:{{ sls_stats_port }}/stats/{{ player }}?legacy=1"
                                   onclick="copyToClipboard(this)" onkeyup="if(event.key==='Enter') copyToClipboard(this)">
                                 http://{{ sls_domain_ip }}:{{ sls_stats_port }}/stats/{{ player }}?legacy=1
                             </span>
-                            <span class="copy-feedback" aria-live="polite" aria-atomic="true"></span>
+                            <span class="copy-feedback"></span>
                         </div>
                         <div id="stats-{{ player }}" data-player-key="{{ player }}">
                             <p>{% trans 'Loading stats...' %}</p>
