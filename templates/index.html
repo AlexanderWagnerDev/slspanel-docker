@@ -21,6 +21,11 @@
                     {{ stream.publisher }}
                 </span>
                 <span class="copy-feedback" aria-live="polite" aria-atomic="true"></span>
+                {% if stream.description %}
+                <div class="mb-2">
+                    {{ stream.description }}
+                </div>
+                {% endif %}
             </button>
         </h2>
         <div id="collapse{{ forloop.counter }}" class="accordion-collapse collapse"

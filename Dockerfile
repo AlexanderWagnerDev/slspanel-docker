@@ -15,11 +15,11 @@ RUN /bin/sh -c "source /venv/bin/activate && pip install --upgrade pip && pip in
 
 ENV PATH="/venv/bin:$PATH"
 
-FROM alexanderwagnerdev/alpine:latest
+FROM alexanderwagnerdev/alpine:autoupdate-stable
 
 RUN apk update && \
     apk upgrade && \
-    apk add --no-cache python3 bash tzdata && \
+    apk add --no-cache python3 py3-pip bash tzdata && \
     rm -rf /var/cache/apk/*
 
 WORKDIR /app
