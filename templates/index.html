@@ -22,7 +22,7 @@
                 <span class="copy-feedback" ></span>
                 {% if stream.main_description %}
                     <div class="mb-2">
-                    <strong>{% trans "Description" %}:</strong> {{ stream.main_description }}
+                    <strong>{% trans "Description" %}:</strong>
                     <span tabindex="0" role="button" data-url="{{ stream.main_description }}"
                     onclick="copyToClipboard(this)" onkeyup="if(event.key==='Enter') copyToClipboard(this)">
                     {{ stream.main_description }}
@@ -80,7 +80,7 @@
                         <div class="mt-2">
                             {% if player.description %}
                             <div class="mt-1 small text-muted">
-                            <strong>{{ player.description }}</strong>
+                            <strong>{% trans "Description" %}:</strong>
                             <span tabindex="0" role="button" data-url="{{ player.description }}"
                             onclick="copyToClipboard(this)" onkeyup="if(event.key==='Enter') copyToClipboard(this)">
                             {{ player.description }}
