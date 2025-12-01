@@ -12,8 +12,8 @@ msgstr "Abmelden"
 msgid "Create Stream"
 msgstr "Stream erstellen"
 
-msgid "Stream URLs"
-msgstr "Stream URLs"
+msgid "Stream Publish URLs"
+msgstr "Stream Publish URLs"
 
 msgid "SRT Publish URL"
 msgstr "SRT Publish URL"
@@ -31,7 +31,7 @@ msgid "Loading stats..."
 msgstr "Statistiken werden geladen..."
 
 msgid "Players"
-msgstr "Player"
+msgstr "Players"
 
 msgid "Player URL"
 msgstr "Player URL"
@@ -98,3 +98,6 @@ msgstr "Beschreibung"
 
 msgid "Copied"
 msgstr "Kopiert"
+
+msgid "Create"
+msgstr "Erstellen"

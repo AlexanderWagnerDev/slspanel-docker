@@ -12,8 +12,8 @@ msgstr "Logout"
 msgid "Create Stream"
 msgstr "Create Stream"
 
-msgid "Stream URLs"
-msgstr "Stream URLs"
+msgid "Stream Publish URLs"
+msgstr "Stream Publish URLs"
 
 msgid "SRT Publish URL"
 msgstr "SRT Publish URL"
@@ -98,3 +98,6 @@ msgstr "Description"
 
 msgid "Copied"
 msgstr "Copied"
+
+msgid "Create"
+msgstr "Create"

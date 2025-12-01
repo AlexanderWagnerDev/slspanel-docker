@@ -60,22 +60,34 @@ def index(request):
     code, res = call_api('GET', '/api/stream-ids')
     entries = res.get("data") if res and isinstance(res, dict) and "data" in res else []
     publisher_map = {}
+    
     for entry in entries:
         pub = entry.get("publisher")
         player = entry.get("player")
         desc = entry.get("description", "")
         if not pub:
             continue
+            
         if pub not in publisher_map:
-            publisher_map[pub] = {"publisher": pub, "player": [], "description": desc}
-        if desc:
+            publisher_map[pub] = {"publisher": pub, "player": [], "description": ""}
+        
+        if player:
+            player_obj = {"key": player, "description": desc}
+            if player_obj not in publisher_map[pub]["player"]:
+                publisher_map[pub]["player"].append(player_obj)
+        
+        if not publisher_map[pub]["description"] and desc:
             publisher_map[pub]["description"] = desc
-        if player and player not in publisher_map[pub]["player"]:
-            publisher_map[pub]["player"].append(player)
+    
     streams = list(publisher_map.values())
-
+    
     for s in streams:
-        s["main_player"] = s["player"][0] if s["player"] else None
+        if s["player"]:
+            s["main_player"] = s["player"][0]["key"]
+            s["main_description"] = s["player"][0]["description"]
+        else:
+            s["main_player"] = None
+            s["main_description"] = ""
 
     context = {
         'streams': streams,
