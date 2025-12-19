@@ -21,18 +21,19 @@ You can also run the container manually with environment variables in the comman
 ```
   docker run -d \
   -e REQUIRE_LOGIN=True \
-  -e WEB_USERNAME=admin \
-  -e WEB_PASSWORD=supersecret \
+  -e USERNAME=admin \
+  -e PASSWORD=supersecret \
   -e SLS_API_URL=http://localhost:8789 \
   -e SLS_API_KEY=your_api_key \
   -e SLS_DOMAIN_IP=localhost \
+  -e SLS_STATS_DOMAIN_IP=localhost \
   -e LANG=en \
   -e TZ=UTC \
   -e SRT_PUBLISH_PORT=4000 \
   -e SRT_PLAYER_PORT=4001 \
   -e SRTLA_PUBLISH_PORT=5000 \
   -e SLS_STATS_PORT=8789 \
-  -p 8000:8000/tcp alexanderwagnerdev/slspanel:latest
+  -p 8000:8000/tcp alexanderwagnerdev/slspanel:beta
 ```
 
 ## Configuration
