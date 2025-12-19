@@ -100,61 +100,84 @@ function initializeStats() {
 }
 function loadStats(playerKey) {
     const statsContainer = document.getElementById(`stats-${playerKey}`);
+    
     if (!statsContainer) {
+        console.error('Stats container not found for:', playerKey);
         return;
     }
-    fetch(`/streams/stats/${playerKey}/`)
+    
+    // Debug: Zeige die URL
+    const url = `/streams/stats/${playerKey}/`;
+    console.log('Fetching stats from:', url);
+    
+    fetch(url)
         .then(response => {
+            console.log('Response status:', response.status);
+            console.log('Response ok:', response.ok);
+            
             if (!response.ok) {
-                throw new Error('Network response was not ok');
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
             return response.json();
         })
         .then(data => {
+            console.log('Stats data received:', data);
+            
             if (data.error) {
-                statsContainer.innerHTML = `<p class="text-danger">${window.translations.errorLoadingStats}</p>`;
+                statsContainer.innerHTML = `<p class="text-danger">${data.error}</p>`;
                 return;
             }
+            
+            // Extrahiere Publisher-Daten
             const publisher = data.publisher || {};
+            
+            console.log('Publisher data:', publisher);
+            
+            // Formatiere die Stats
             const bitrate = publisher.bitrate || 0;
             const buffer = publisher.buffer || 0;
             const droppedPkts = publisher.dropped_pkts || 0;
             const latency = publisher.latency || 0;
             const rtt = publisher.rtt ? publisher.rtt.toFixed(2) : '0.00';
             const uptime = formatUptime(publisher.uptime || 0);
-            const status = data.status;
+            const status = data.status || 'unknown';
+            
+            // Bestimme Status-Farbe
             const statusClass = status === 'ok' ? 'text-success' : 'text-warning';
+            
+            // Übersetzungen
             const translations = window.translations || {};
+            
             statsContainer.innerHTML = `
                 <div class="mt-2 p-2 bg-dark bg-opacity-50 rounded">
-                    <h6 class="mb-2">${translations.streamStatistics}</h6>
+                    <h6 class="mb-2">${translations.streamStatistics || 'Stream Statistics'}</h6>
                     <div class="row g-2">
                         <div class="col-md-4 col-6">
-                            <small class="text-muted">${translations.bitrate}:</small><br>
+                            <small class="text-muted">${translations.bitrate || 'Bitrate'}:</small><br>
                             <strong>${bitrate} kbps</strong>
                         </div>
                         <div class="col-md-4 col-6">
-                            <small class="text-muted">${translations.latency}:</small><br>
+                            <small class="text-muted">${translations.latency || 'Latency'}:</small><br>
                             <strong>${latency} ms</strong>
                         </div>
                         <div class="col-md-4 col-6">
-                            <small class="text-muted">${translations.rtt}:</small><br>
+                            <small class="text-muted">${translations.rtt || 'RTT'}:</small><br>
                             <strong>${rtt} ms</strong>
                         </div>
                         <div class="col-md-4 col-6">
-                            <small class="text-muted">${translations.buffer}:</small><br>
+                            <small class="text-muted">${translations.buffer || 'Buffer'}:</small><br>
                             <strong>${buffer} ms</strong>
                         </div>
                         <div class="col-md-4 col-6">
-                            <small class="text-muted">${translations.droppedPackets}:</small><br>
+                            <small class="text-muted">${translations.droppedPackets || 'Dropped Packets'}:</small><br>
                             <strong class="${droppedPkts > 0 ? 'text-warning' : ''}">${droppedPkts}</strong>
                         </div>
                         <div class="col-md-4 col-6">
-                            <small class="text-muted">${translations.uptime}:</small><br>
+                            <small class="text-muted">${translations.uptime || 'Uptime'}:</small><br>
                             <strong>${uptime}</strong>
                         </div>
                         <div class="col-12 mt-1">
-                            <small class="text-muted">${translations.status}:</small>
+                            <small class="text-muted">${translations.status || 'Status'}:</small>
                             <span class="${statusClass} fw-bold"> ${status.toUpperCase()}</span>
                         </div>
                     </div>
@@ -163,7 +186,11 @@ function loadStats(playerKey) {
         })
         .catch(error => {
             console.error('Error fetching stats:', error);
-            statsContainer.innerHTML = `<p class="text-muted"><em>${window.translations.statsNotAvailable}</em></p>`;
+            statsContainer.innerHTML = `
+                <p class="text-danger">
+                    <small>Error: ${error.message}</small>
+                </p>
+            `;
         });
 }
 function formatUptime(seconds) {
