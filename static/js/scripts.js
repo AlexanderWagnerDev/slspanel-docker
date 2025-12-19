@@ -105,6 +105,11 @@ function loadStats(playerKey) {
                 return;
             }
             const publisher = data.publisher || {};
+            if (!data.publisher || Object.keys(publisher).length === 0) {
+                const translations = window.translations || {};
+                statsContainer.innerHTML = `<p class="text-muted"><em>${translations.statsNotAvailable}</em></p>`;
+                return;
+            }
             const bitrate = publisher.bitrate || 0;
             const buffer = publisher.buffer || 0;
             const droppedPkts = publisher.dropped_pkts || 0;
