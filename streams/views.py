@@ -122,7 +122,7 @@ def streams_status_json(request):
 @conditional_login_required
 def sls_stats(request, player_key):
     try:
-        url = f"http://{settings.SLS_DOMAIN_IP}:{settings.SLS_STATS_PORT}/stats/{player_key}"
+        url = f"http://{settings.SLS_STATS_DOMAIN_IP}:{settings.SLS_STATS_PORT}/stats/{player_key}"
         response = requests.get(url, timeout=5)
         response.raise_for_status()
         data = response.json()
