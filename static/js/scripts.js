@@ -142,7 +142,7 @@ function loadStats(playerKey) {
                             <p>${translations.uptime}:</p>
                             <strong>${uptime}</strong>
                         </div>
-                        <div class="col-12 mt-1">
+                        <div class="col-12 mt-2">
                             <p>${translations.status}:</p>
                             <span class="${statusClass} fw-bold"> ${status.toUpperCase()}</span>
                         </div>
