@@ -123,26 +123,12 @@ def streams_status_json(request):
 def sls_stats(request, player_key):
     try:
         url = f"http://{settings.SLS_DOMAIN_IP}:{settings.SLS_STATS_PORT}/stats/{player_key}"
-        import logging
-        logger = logging.getLogger(__name__)
-        logger.info(f"Fetching stats from: {url}")
         response = requests.get(url, timeout=5)
         response.raise_for_status()
         data = response.json()
-        logger.info(f"Stats received: {data}")
-        json_response = JsonResponse(data)
-        json_response["Access-Control-Allow-Origin"] = "*"
-        return json_response
-        
-    except requests.Timeout:
-        logger.error(f"Timeout fetching stats for {player_key}")
-        return JsonResponse({"error": "Stats request timeout", "status": "timeout"}, status=504)
-    except requests.RequestException as e:
-        logger.error(f"Request error for {player_key}: {str(e)}")
-        return JsonResponse({"error": f"Failed to fetch stats: {str(e)}", "status": "error"}, status=500)
-    except Exception as e:
-        logger.error(f"Unexpected error for {player_key}: {str(e)}")
-        return JsonResponse({"error": "Unexpected error", "status": "error"}, status=500)
+        return JsonResponse(data)
+    except:
+        return JsonResponse({"error": "Failed to fetch stats", "status": "error"}, status=500)
 
 @conditional_login_required
 def create_stream(request):
@@ -214,5 +200,4 @@ def delete_stream(request, publisher_key):
 @conditional_login_required
 def delete_player(request, player_key):
     code, res = call_api('DELETE', f'/api/stream-ids/{player_key}')
-
     return redirect('streams:index')

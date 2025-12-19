@@ -20,24 +20,13 @@ async function copyToClipboard(element) {
         await navigator.clipboard.writeText(text);
         showCopyFeedback(element);
     } catch (err) {
-        console.warn('Clipboard API failed, using fallback:', err);
         copyToClipboardFallback(text, element);
     }
 }
 function copyToClipboardFallback(text, element) {
     const textArea = document.createElement('textarea');
     textArea.value = text;
-    textArea.style.position = 'fixed';
-    textArea.style.top = '0';
-    textArea.style.left = '0';
-    textArea.style.width = '2em';
-    textArea.style.height = '2em';
-    textArea.style.padding = '0';
-    textArea.style.border = 'none';
-    textArea.style.outline = 'none';
-    textArea.style.boxShadow = 'none';
-    textArea.style.background = 'transparent';
-    textArea.style.opacity = '0';
+    textArea.style.cssText = 'position:fixed;top:0;left:0;width:2em;height:2em;padding:0;border:none;outline:none;box-shadow:none;background:transparent;opacity:0;';
     document.body.appendChild(textArea);
     textArea.focus();
     textArea.select();
@@ -46,11 +35,9 @@ function copyToClipboardFallback(text, element) {
         if (successful) {
             showCopyFeedback(element);
         } else {
-            console.error('Fallback: Copy command was unsuccessful');
             showCopyError(element);
         }
     } catch (err) {
-        console.error('Fallback: Unable to copy', err);
         showCopyError(element);
     } finally {
         document.body.removeChild(textArea);
@@ -83,7 +70,7 @@ function initializeStats() {
     if (statsContainers.length === 0) {
         return;
     }
-        statsContainers.forEach(container => {
+    statsContainers.forEach(container => {
         const playerKey = container.dataset.playerKey;
         if (playerKey) {
             loadStats(playerKey);
@@ -100,37 +87,24 @@ function initializeStats() {
 }
 function loadStats(playerKey) {
     const statsContainer = document.getElementById(`stats-${playerKey}`);
-    
     if (!statsContainer) {
-        console.error('Stats container not found for:', playerKey);
         return;
     }
-    const langCode = document.documentElement.lang
+    const langCode = document.documentElement.lang || 'en';
     const url = `/${langCode}/sls-stats/${playerKey}/`;
-    console.log('Fetching stats from:', url);
-    
     fetch(url)
         .then(response => {
-            console.log('Response status:', response.status);
-            console.log('Response ok:', response.ok);
-            
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             return response.json();
         })
         .then(data => {
-            console.log('Stats data received:', data);
-            
             if (data.error) {
                 statsContainer.innerHTML = `<p class="text-danger">${data.error}</p>`;
                 return;
             }
-            
             const publisher = data.publisher || {};
-            
-            console.log('Publisher data:', publisher);
-            
             const bitrate = publisher.bitrate || 0;
             const buffer = publisher.buffer || 0;
             const droppedPkts = publisher.dropped_pkts || 0;
@@ -138,41 +112,38 @@ function loadStats(playerKey) {
             const rtt = publisher.rtt ? publisher.rtt.toFixed(2) : '0.00';
             const uptime = formatUptime(publisher.uptime || 0);
             const status = data.status || 'unknown';
-            
             const statusClass = status === 'ok' ? 'text-success' : 'text-warning';
-            
             const translations = window.translations || {};
-            
             statsContainer.innerHTML = `
                 <div class="mt-2 p-2 bg-dark bg-opacity-50 rounded">
-                    <h6 class="mb-2">${translations.streamStatistics || 'Stream Statistics'}</h6>
+                    <h6 class="mb-2">${translations.streamStatistics}</h6>
                     <div class="row g-2">
                         <div class="col-md-4 col-6">
-                            <small class="text-muted">${translations.bitrate || 'Bitrate'}:</small><br>
+                            <p>${translations.bitrate}:</p>
                             <strong>${bitrate} kbps</strong>
                         </div>
                         <div class="col-md-4 col-6">
-                            <small class="text-muted">${translations.latency || 'Latency'}:</small><br>
+                            <p>${translations.latency}:</p>
                             <strong>${latency} ms</strong>
                         </div>
                         <div class="col-md-4 col-6">
-                            <small class="text-muted">${translations.rtt || 'RTT'}:</small><br>
+                            <p>${translations.rtt}:</p>
                             <strong>${rtt} ms</strong>
                         </div>
                         <div class="col-md-4 col-6">
-                            <small class="text-muted">${translations.buffer || 'Buffer'}:</small><br>
+                            <p>${translations.buffer}:</p>
                             <strong>${buffer} ms</strong>
                         </div>
                         <div class="col-md-4 col-6">
-                            <small class="text-muted">${translations.droppedPackets || 'Dropped Packets'}:</small><br>
+                            <p>${translations.droppedPackets}:</p>
                             <strong class="${droppedPkts > 0 ? 'text-warning' : ''}">${droppedPkts}</strong>
                         </div>
                         <div class="col-md-4 col-6">
-                            <small class="text-muted">${translations.uptime || 'Uptime'}:</small><br>
+                            <p>${translations.uptime}:</p>
                             <strong>${uptime}</strong>
                         </div>
                         <div class="col-12 mt-1">
-                            <small class="text-muted">${translations.status || 'Status'}:</small>
+                            <p>${translations.status}:</p>
                             <span class="${statusClass} fw-bold"> ${status.toUpperCase()}</span>
                         </div>
                     </div>
@@ -180,25 +151,15 @@ function loadStats(playerKey) {
             `;
         })
         .catch(error => {
-            console.error('Error fetching stats:', error);
-            statsContainer.innerHTML = `
-                <p class="text-danger">
-                    <small>Error: ${error.message}</small>
-                </p>
-            `;
+            statsContainer.innerHTML = `<p><em>${window.translations.statsNotAvailable}</em></p>`;
         });
 }
 function formatUptime(seconds) {
     if (!seconds) return '00:00:00';
     const days = Math.floor(seconds / 86400);
-    const hours = Math.floor(seconds / 3600);
+    const hours = Math.floor((seconds % 86400) / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     const secs = seconds % 60;
-    if (days > 0) {
-        return `${days}d ${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-    } else {
-        return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-    }
+    const time = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    return days > 0 ? `${days}d ${time}` : time;
 }
-
-
