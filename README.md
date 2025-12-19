@@ -21,8 +21,8 @@ You can also run the container manually with environment variables in the comman
 ```
   docker run -d \
   -e REQUIRE_LOGIN=True \
-  -e WEB_USERNAME=admin \
-  -e WEB_PASSWORD=supersecret \
+  -e USERNAME=admin \
+  -e PASSWORD=supersecret \
   -e SLS_API_URL=http://localhost:8789 \
   -e SLS_API_KEY=your_api_key \
   -e SLS_DOMAIN_IP=localhost \
