@@ -106,7 +106,7 @@ function loadStats(playerKey) {
         return;
     }
     const langCode = document.documentElement.lang
-    const url = `/${langCode}/streams/stats/${playerKey}/`;
+    const url = `/${langCode}/sls-stats/${playerKey}/`;
     console.log('Fetching stats from:', url);
     
     fetch(url)
@@ -127,12 +127,10 @@ function loadStats(playerKey) {
                 return;
             }
             
-            // Extrahiere Publisher-Daten
             const publisher = data.publisher || {};
             
             console.log('Publisher data:', publisher);
             
-            // Formatiere die Stats
             const bitrate = publisher.bitrate || 0;
             const buffer = publisher.buffer || 0;
             const droppedPkts = publisher.dropped_pkts || 0;
@@ -141,10 +139,8 @@ function loadStats(playerKey) {
             const uptime = formatUptime(publisher.uptime || 0);
             const status = data.status || 'unknown';
             
-            // Bestimme Status-Farbe
             const statusClass = status === 'ok' ? 'text-success' : 'text-warning';
             
-            // Übersetzungen
             const translations = window.translations || {};
             
             statsContainer.innerHTML = `
@@ -204,4 +200,5 @@ function formatUptime(seconds) {
         return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
     }
 }
+
 
