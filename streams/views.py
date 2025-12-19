@@ -122,13 +122,13 @@ def streams_status_json(request):
 @conditional_login_required
 def sls_stats(request, player_key):
     try:
-        url = f"http://{settings.SLS_DOMAIN_IP}:{settings.SLS_STATS_PORT}/stats/{player_key}"
-        response = requests.get(url, timeout=3)
+        url = f"http://{settings.SLS_STATS_DOMAIN_IP}:{settings.SLS_STATS_PORT}/stats/{player_key}"
+        response = requests.get(url, timeout=5)
         response.raise_for_status()
         data = response.json()
         return JsonResponse(data)
-    except Exception as e:
-        return JsonResponse({"error": "Failed to fetch stats"}, status=500)
+    except:
+        return JsonResponse({"error": "Failed to fetch stats", "status": "error"}, status=500)
 
 @conditional_login_required
 def create_stream(request):

@@ -18,6 +18,7 @@ SRT_PUBLISH_PORT = int(os.getenv("SRT_PUBLISH_PORT", 4001))
 SRT_PLAYER_PORT = int(os.getenv("SRT_PLAYER_PORT", 4000))
 SRTLA_PUBLISH_PORT = int(os.getenv("SRTLA_PUBLISH_PORT", 5000))
 SLS_DOMAIN_IP = os.getenv("SLS_DOMAIN_IP", "localhost")
+SLS_STATS_DOMAIN_IP = os.getenv("SLS_STATS_DOMAIN_IP", SLS_DOMAIN_IP)
 SLS_STATS_PORT = int(os.getenv("SLS_STATS_PORT", 8789))
 
 SLS_API_URL = os.getenv("SLS_API_URL", "http://localhost:8789")
