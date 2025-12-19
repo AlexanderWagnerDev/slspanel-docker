@@ -101,3 +101,19 @@ msgstr "Kopiert"
 
 msgid "Create"
 msgstr "Erstellen"
+
+# Neue Übersetzungen für Stats
+msgid "Copy failed"
+msgstr "Kopieren fehlgeschlagen"
+
+msgid "Stream Statistics"
+msgstr "Stream-Statistiken"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "Error loading stats"
+msgstr "Fehler beim Laden der Statistiken"
+
+msgid "Stats not available"
+msgstr "Statistiken nicht verfügbar"

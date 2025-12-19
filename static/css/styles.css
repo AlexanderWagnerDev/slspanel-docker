@@ -39,3 +39,20 @@ body.dark {
 .copy-feedback.visible {
     display: inline;
 }
+.bg-dark.bg-opacity-50 {
+    background-color: rgba(33, 37, 41, 0.5) !important;
+}
+[id^="stats-"] .row {
+    font-size: 0.9rem;
+}
+[id^="stats-"] strong {
+    color: #0dcaf0;
+}
+[id^="stats-"] .text-muted {
+    opacity: 0.7;
+}
+@media (max-width: 768px) {
+    [id^="stats-"] .col-6 {
+        margin-bottom: 0.5rem;
+    }
+}
