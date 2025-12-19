@@ -105,9 +105,8 @@ function loadStats(playerKey) {
         console.error('Stats container not found for:', playerKey);
         return;
     }
-    
-    // Debug: Zeige die URL
-    const url = `/streams/stats/${playerKey}/`;
+    const langCode = document.documentElement.lang
+    const url = `/${langCode}/streams/stats/${playerKey}/`;
     console.log('Fetching stats from:', url);
     
     fetch(url)
@@ -205,3 +204,4 @@ function formatUptime(seconds) {
         return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
     }
 }
+
