@@ -130,7 +130,7 @@ For questions, issues, or feature requests:
 
 ## 🔗 Related Projects
 
-- [SRT Live Server](https://github.com/Edward-Wu/srt-live-server) - The streaming server this panel manages
+- [SRTLA Server Docker](https://github.com/AlexanderWagnerDev/srtla-server-docker) - The streaming server this panel manages
 
 ---
 
@@ -268,4 +268,4 @@ Für Fragen, Probleme oder Feature-Requests:
 
 ## 🔗 Verwandte Projekte
 
-- [SRT Live Server](https://github.com/Edward-Wu/srt-live-server) - Der Streaming-Server, den dieses Panel verwaltet
+- [SRTLA Server Docker](https://github.com/AlexanderWagnerDev/srtla-server-docker) - Der Streaming-Server, den dieses Panel verwaltet
