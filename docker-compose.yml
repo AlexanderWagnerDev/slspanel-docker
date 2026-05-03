@@ -17,5 +17,8 @@ services:
       - REQUIRE_LOGIN=True
       - USERNAME=admin
       - PASSWORD=password
+      # Optional: required when running behind a reverse proxy (e.g. Cloudflare Tunnel)
+      # - CSRF_TRUSTED_ORIGINS=https://mydomain.com,https://*.trycloudflare.com
+      # - SECURE_PROXY_SSL_HEADER=true
     ports:
       - "8000:8000/tcp"
