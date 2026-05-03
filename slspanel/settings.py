@@ -98,15 +98,10 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# Optional: Comma-separated list of trusted origins for CSRF protection
-# Required when running behind a reverse proxy (e.g. Cloudflare Tunnel, Nginx)
-# Example: CSRF_TRUSTED_ORIGINS=https://mydomain.com,https://*.trycloudflare.com
 _csrf_origins = os.getenv("CSRF_TRUSTED_ORIGINS", "")
 if _csrf_origins:
     CSRF_TRUSTED_ORIGINS = [o.strip() for o in _csrf_origins.split(",") if o.strip()]
 
-# Optional: Enable HTTPS detection via X-Forwarded-Proto header
-# Set to 'true' when running behind a TLS-terminating reverse proxy
 _proxy_ssl = os.getenv("SECURE_PROXY_SSL_HEADER", "")
 if _proxy_ssl.lower() in ['true', '1', 'yes']:
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
