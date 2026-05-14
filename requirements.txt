@@ -1,4 +1,4 @@
 Django==6.0.5
 gunicorn==26.0.0
-requests==2.34.0
+requests==2.34.1
 whitenoise==6.12.0
