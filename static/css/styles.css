@@ -22,6 +22,17 @@ body.dark {
     border-radius: 4px;
     display: inline-block;
 }
+button.copy-button {
+    background: none;
+    border: none;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    padding: 0;
+}
+button.copy-button.blur-text {
+    padding: 2px 4px;
+}
 .blur-text:focus,
 .blur-text:hover {
     filter: none;

@@ -15,32 +15,13 @@ document.addEventListener('DOMContentLoaded', function(){
     initializeStats();
 });
 async function copyToClipboard(element) {
-    const text = element.getAttribute('data-url');
+    const text = element.dataset.url;
     try {
         await navigator.clipboard.writeText(text);
         showCopyFeedback(element);
     } catch (err) {
-        copyToClipboardFallback(text, element);
-    }
-}
-function copyToClipboardFallback(text, element) {
-    const textArea = document.createElement('textarea');
-    textArea.value = text;
-    textArea.style.cssText = 'position:fixed;top:0;left:0;width:2em;height:2em;padding:0;border:none;outline:none;box-shadow:none;background:transparent;opacity:0;';
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-    try {
-        const successful = document.execCommand('copy');
-        if (successful) {
-            showCopyFeedback(element);
-        } else {
-            showCopyError(element);
-        }
-    } catch (err) {
+        // The Clipboard API can be unavailable (e.g. insecure context) or denied by the user.
         showCopyError(element);
-    } finally {
-        document.body.removeChild(textArea);
     }
 }
 function showCopyFeedback(element) {

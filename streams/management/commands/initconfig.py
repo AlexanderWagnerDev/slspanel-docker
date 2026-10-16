@@ -7,7 +7,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         lang = os.getenv("LANG", "en")
-        conf, created = Configuration.objects.get_or_create(id=1)
+        conf, _ = Configuration.objects.get_or_create(id=1)
         conf.language = lang
         conf.save()
         self.stdout.write(self.style.SUCCESS(f"Config set language to {lang}"))
