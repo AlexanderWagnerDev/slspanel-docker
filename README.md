@@ -30,13 +30,13 @@ git clone https://github.com/AlexanderWagnerDev/slspanel-docker.git
 cd slspanel-docker
 ```
 
-2. Edit `docker-compose.yml` and configure your environment variables:
+2. Either copy `.env.example` to `.env` and edit it, or edit `docker-compose.yml` directly. The provided Compose file reads the variables from `.env` when present:
 ```yaml
 environment:
   REQUIRE_LOGIN: "True"           # Enable/disable authentication
   USERNAME: "admin"               # Admin username
   PASSWORD: "supersecret"         # Admin password
-  SLS_API_URL: "http://localhost:8789"  # Your SLS server URL
+  SLS_API_URL: "http://sls-api-url:8789"  # Hostname reachable from the container
   SLS_API_KEY: "your_api_key"     # Your SLS API key
   # ... more settings
 ```
@@ -58,13 +58,13 @@ docker run -d \
   -e REQUIRE_LOGIN=True \
   -e USERNAME=admin \
   -e PASSWORD=supersecret \
-  -e SLS_API_URL=http://localhost:8789 \
+  -e SLS_API_URL=http://sls-api-url:8789 \
   -e SLS_API_KEY=your_api_key \
   -e SLS_DOMAIN_IP=localhost \
   -e LANG=en \
   -e TZ=Europe/Vienna \
-  -e SRT_PUBLISH_PORT=4000 \
-  -e SRT_PLAYER_PORT=4001 \
+  -e SRT_PUBLISH_PORT=4001 \
+  -e SRT_PLAYER_PORT=4000 \
   -e SRTLA_PUBLISH_PORT=5000 \
   -e SLS_STATS_PORT=8789 \
   -p 8000:8000/tcp \
@@ -85,10 +85,14 @@ docker run -d \
 | `SLS_DOMAIN_IP` | Domain or IP for stream URLs | `localhost` | Yes |
 | `LANG` | Interface language (`en`/`de`) | `en` | No |
 | `TZ` | Timezone | `UTC` | No |
-| `SRT_PUBLISH_PORT` | SRT publishing port | `4000` | Yes |
-| `SRT_PLAYER_PORT` | SRT playback port | `4001` | Yes |
+| `SRT_PUBLISH_PORT` | SRT publishing port | `4001` | Yes |
+| `SRT_PLAYER_PORT` | SRT playback port | `4000` | Yes |
 | `SRTLA_PUBLISH_PORT` | SRTLA publishing port | `5000` | Yes |
+| `SLS_STATS_DOMAIN_IP` | Domain or IP for statistics URLs | `SLS_DOMAIN_IP` | No |
+| `SLS_STATS_SCHEME` | Scheme for statistics URLs (`http`/`https`) | `http` | No |
 | `SLS_STATS_PORT` | SLS statistics port | `8789` | Yes |
+
+When `REQUIRE_LOGIN=True`, `PASSWORD` must be set to a non-empty value. The container refuses to start with a default password instead of exposing a known administrator account.
 
 ### Example Configuration
 
@@ -105,6 +109,7 @@ environment:
 
 ### Cannot connect to SLS server
 - Verify `SLS_API_URL` is correct and reachable from the container
+- Use a hostname or IP reachable from the container; `localhost` inside the container is the panel container, not the Docker host
 - Check if `SLS_API_KEY` matches your SLS configuration
 - Ensure SLS server is running and API is enabled
 
@@ -168,13 +173,13 @@ git clone https://github.com/AlexanderWagnerDev/slspanel-docker.git
 cd slspanel-docker
 ```
 
-2. `docker-compose.yml` bearbeiten und Umgebungsvariablen konfigurieren:
+2. Entweder `.env.example` nach `.env` kopieren und bearbeiten oder `docker-compose.yml` direkt bearbeiten. Die mitgelieferte Compose-Datei liest die Variablen aus `.env`, falls vorhanden:
 ```yaml
 environment:
   REQUIRE_LOGIN: "True"           # Authentifizierung aktivieren/deaktivieren
   USERNAME: "admin"               # Admin-Benutzername
   PASSWORD: "supersecret"         # Admin-Passwort
-  SLS_API_URL: "http://localhost:8789"  # Deine SLS-Server-URL
+  SLS_API_URL: "http://sls-api-url:8789"  # Vom Container erreichbarer Hostname
   SLS_API_KEY: "your_api_key"     # Dein SLS API-Key
   # ... weitere Einstellungen
 ```
@@ -196,13 +201,13 @@ docker run -d \
   -e REQUIRE_LOGIN=True \
   -e USERNAME=admin \
   -e PASSWORD=supersecret \
-  -e SLS_API_URL=http://localhost:8789 \
+  -e SLS_API_URL=http://sls-api-url:8789 \
   -e SLS_API_KEY=your_api_key \
   -e SLS_DOMAIN_IP=localhost \
   -e LANG=de \
   -e TZ=Europe/Vienna \
-  -e SRT_PUBLISH_PORT=4000 \
-  -e SRT_PLAYER_PORT=4001 \
+  -e SRT_PUBLISH_PORT=4001 \
+  -e SRT_PLAYER_PORT=4000 \
   -e SRTLA_PUBLISH_PORT=5000 \
   -e SLS_STATS_PORT=8789 \
   -p 8000:8000/tcp \
@@ -223,10 +228,14 @@ docker run -d \
 | `SLS_DOMAIN_IP` | Domain oder IP für Stream-URLs | `localhost` | Ja |
 | `LANG` | Sprache der Oberfläche (`en`/`de`) | `en` | Nein |
 | `TZ` | Zeitzone | `UTC` | Nein |
-| `SRT_PUBLISH_PORT` | SRT Publishing-Port | `4000` | Ja |
-| `SRT_PLAYER_PORT` | SRT Playback-Port | `4001` | Ja |
+| `SRT_PUBLISH_PORT` | SRT Publishing-Port | `4001` | Ja |
+| `SRT_PLAYER_PORT` | SRT Playback-Port | `4000` | Ja |
 | `SRTLA_PUBLISH_PORT` | SRTLA Publishing-Port | `5000` | Ja |
+| `SLS_STATS_DOMAIN_IP` | Domain oder IP für Statistik-URLs | `SLS_DOMAIN_IP` | Nein |
+| `SLS_STATS_SCHEME` | Schema für Statistik-URLs (`http`/`https`) | `http` | Nein |
 | `SLS_STATS_PORT` | SLS Statistik-Port | `8789` | Ja |
+
+Wenn `REQUIRE_LOGIN=True` gesetzt ist, muss `PASSWORD` auf einen nicht leeren Wert gesetzt werden. Der Container startet nicht mit einem Standardpasswort, statt ein bekanntes Administratorkonto freizugeben.
 
 ### Beispiel-Konfiguration
 

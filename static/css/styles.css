@@ -53,6 +53,18 @@ button.copy-button.blur-text {
 .bg-dark.bg-opacity-50 {
     background-color: rgba(33, 37, 41, 0.5) !important;
 }
+body.dark .text-success {
+    color: #75b798 !important;
+}
+body.dark .text-danger {
+    color: #ea868f !important;
+}
+body.dark .text-warning {
+    color: #ffda6a !important;
+}
+body.dark .text-muted {
+    color: #a7acb1 !important;
+}
 [id^="stats-"] p {
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;

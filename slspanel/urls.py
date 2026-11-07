@@ -1,11 +1,16 @@
+from django.conf import settings
 from django.contrib import admin
+from django.shortcuts import redirect
 from django.urls import path, include
 from django.conf.urls.i18n import i18n_patterns
-from django.views.generic import RedirectView
-import os
+
+
+def root_redirect(request):
+    return redirect(f"/{settings.LANGUAGE_CODE}/")
+
 
 urlpatterns = [
-    path('', RedirectView.as_view(url=f'/{os.getenv("LANG", "en")}/', permanent=False)),
+    path('', root_redirect),
 ]
 
 urlpatterns += i18n_patterns(
