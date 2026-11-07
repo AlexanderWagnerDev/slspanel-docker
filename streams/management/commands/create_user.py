@@ -21,8 +21,8 @@ class Command(BaseCommand):
                 "PASSWORD (or WEB_PASSWORD) must be set when REQUIRE_LOGIN is enabled."
             )
         if password == "password":
-            self.stdout.write(
-                self.style.WARNING("The example password is in use; change PASSWORD before exposing the panel.")
+            raise CommandError(
+                "PASSWORD must not use the example default value; choose a strong password."
             )
 
         user, created = User.objects.get_or_create(username=username, defaults={"email": ""})
@@ -31,6 +31,20 @@ class Command(BaseCommand):
         user.is_active = True
         user.set_password(password)
         user.save()
+
+        # Deactivate legacy accounts that still use the old example password.
+        # This covers upgrades where the configured username changed and an
+        # old admin/password superuser would otherwise remain usable.
+        legacy_users = User.objects.filter(is_superuser=True).exclude(username=username)
+        for legacy_user in legacy_users:
+            if legacy_user.check_password("password"):
+                legacy_user.is_active = False
+                legacy_user.save(update_fields=["is_active"])
+                self.stdout.write(
+                    self.style.WARNING(
+                        f"Deactivated legacy default-password account '{legacy_user.username}'."
+                    )
+                )
 
         if created:
             self.stdout.write(self.style.SUCCESS(f"User '{username}' was created."))

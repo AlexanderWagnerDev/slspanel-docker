@@ -62,6 +62,25 @@ class CreateUserCommandTests(TestCase):
 
         self.assertFalse(User.objects.exists())
 
+    def test_example_password_fails_closed(self):
+        with self.assertRaises(CommandError):
+            self._run_with_env(REQUIRE_LOGIN="True", USERNAME="alice", PASSWORD="password")
+
+        self.assertFalse(User.objects.exists())
+
+    def test_legacy_default_password_account_is_deactivated(self):
+        legacy = User.objects.create_superuser(username="admin", email="", password="password")
+
+        self._run_with_env(
+            REQUIRE_LOGIN="True",
+            USERNAME="operator",
+            PASSWORD="strong-password",
+        )
+
+        legacy.refresh_from_db()
+        self.assertFalse(legacy.is_active)
+        self.assertTrue(User.objects.get(username="operator").is_active)
+
     def test_default_require_login_matches_settings(self):
         self.assertFalse(project_settings.REQUIRE_LOGIN)
         self._run_with_env(USERNAME="alice", PASSWORD="s3cret")
@@ -158,6 +177,21 @@ class IndexTemplateTests(TestCase):
         self.assertNotIn("https://stream.example:8789/stats/play", content)
         self.assertIn("srt://stream.example:4001?streamid=pub", content)
         self.assertIn("srt://stream.example:4000?streamid=play", content)
+
+    @override_settings(
+        REQUIRE_LOGIN=False,
+        SLS_DOMAIN_IP="stream.example",
+        SLS_STATS_DOMAIN_IP="",
+        SLS_STATS_PORT=8789,
+        SLS_STATS_SCHEME="http",
+    )
+    def test_empty_statistics_domain_falls_back_to_stream_domain(self):
+        entries = [{"publisher": "pub", "player": "play", "description": "desc"}]
+        with patch("streams.views._fetch_stream_entries", return_value=entries):
+            with translation.override("en"):
+                response = Client().get("/en/")
+
+        self.assertContains(response, "http://stream.example:8789/stats/play")
 
     @override_settings(REQUIRE_LOGIN=False)
     def test_mobile_viewport_is_declared(self):

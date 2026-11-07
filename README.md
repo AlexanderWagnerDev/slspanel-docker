@@ -41,6 +41,8 @@ environment:
   # ... more settings
 ```
 
+When using `.env`, set `SLS_ADMIN_USERNAME` and `SLS_ADMIN_PASSWORD`; the Compose file maps them to the container's `USERNAME` and `PASSWORD`.
+
 3. Start the container:
 ```bash
 docker-compose up -d
@@ -92,7 +94,7 @@ docker run -d \
 | `SLS_STATS_SCHEME` | Scheme for statistics URLs (`http`/`https`) | `http` | No |
 | `SLS_STATS_PORT` | SLS statistics port | `8789` | Yes |
 
-When `REQUIRE_LOGIN=True`, `PASSWORD` must be set to a non-empty value. The container refuses to start with a default password instead of exposing a known administrator account.
+When `REQUIRE_LOGIN=True`, `PASSWORD` must be non-empty and must not be the literal example password `password`. The container refuses to start otherwise and deactivates a legacy superuser account that still uses the old example password.
 
 ### Example Configuration
 
@@ -184,6 +186,8 @@ environment:
   # ... weitere Einstellungen
 ```
 
+Bei Verwendung von `.env` `SLS_ADMIN_USERNAME` und `SLS_ADMIN_PASSWORD` setzen; die Compose-Datei überträgt sie auf `USERNAME` und `PASSWORD` des Containers.
+
 3. Container starten:
 ```bash
 docker-compose up -d
@@ -235,7 +239,7 @@ docker run -d \
 | `SLS_STATS_SCHEME` | Schema für Statistik-URLs (`http`/`https`) | `http` | Nein |
 | `SLS_STATS_PORT` | SLS Statistik-Port | `8789` | Ja |
 
-Wenn `REQUIRE_LOGIN=True` gesetzt ist, muss `PASSWORD` auf einen nicht leeren Wert gesetzt werden. Der Container startet nicht mit einem Standardpasswort, statt ein bekanntes Administratorkonto freizugeben.
+Wenn `REQUIRE_LOGIN=True` gesetzt ist, muss `PASSWORD` nicht leer und darf nicht das literale Beispielpasswort `password` sein. Der Container startet sonst nicht und deaktiviert ein bestehendes Superuser-Konto, das noch das alte Beispielpasswort verwendet.
 
 ### Beispiel-Konfiguration
 

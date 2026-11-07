@@ -146,7 +146,7 @@ def index(request):
         'srt_player_port': settings.SRT_PLAYER_PORT,
         'srtla_publish_port': settings.SRTLA_PUBLISH_PORT,
         'sls_domain_ip': settings.SLS_DOMAIN_IP,
-        'sls_stats_domain_ip': getattr(settings, 'SLS_STATS_DOMAIN_IP', settings.SLS_DOMAIN_IP),
+        'sls_stats_domain_ip': getattr(settings, 'SLS_STATS_DOMAIN_IP', '') or settings.SLS_DOMAIN_IP,
         'sls_stats_port': settings.SLS_STATS_PORT,
         'sls_stats_scheme': getattr(settings, 'SLS_STATS_SCHEME', 'http'),
     }
