@@ -82,6 +82,21 @@ class CreateUserCommandTests(TestCase):
         self.assertTrue(legacy.is_active)
         self.assertTrue(User.objects.filter(username="operator").exists())
 
+    def test_inactive_legacy_default_password_account_does_not_block_startup(self):
+        legacy = User.objects.create_superuser(username="admin", email="", password="password")
+        legacy.is_active = False
+        legacy.save(update_fields=["is_active"])
+
+        self._run_with_env(
+            REQUIRE_LOGIN="True",
+            USERNAME="operator",
+            PASSWORD="strong-password",
+        )
+
+        legacy.refresh_from_db()
+        self.assertFalse(legacy.is_active)
+        self.assertTrue(User.objects.filter(username="operator").exists())
+
     def test_default_require_login_is_disabled(self):
         # The imported settings value depends on the test process environment.
         # The command default is the startup contract that matters here.

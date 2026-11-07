@@ -35,6 +35,8 @@ function setNavigator(value) {
 
 function createClipboardFixture({ clipboard, textAreaError = false } = {}) {
     const inserted = [];
+    const textAreas = [];
+    let currentField = null;
     const feedback = {
         textContent: '',
         classList: {
@@ -44,7 +46,11 @@ function createClipboardFixture({ clipboard, textAreaError = false } = {}) {
                 return name === 'copy-feedback';
             },
         },
+        get nextElementSibling() {
+            return currentField;
+        },
         after(element) {
+            currentField = element;
             inserted.push({ position: 'after', element });
         },
     };
@@ -55,26 +61,36 @@ function createClipboardFixture({ clipboard, textAreaError = false } = {}) {
             inserted.push({ position: 'after', element });
         },
     };
-    const textArea = {
-        value: '',
-        className: '',
-        attributes: {},
-        focused: false,
-        selected: false,
-        removed: false,
-        setAttribute(name, value) {
-            this.attributes[name] = value;
-        },
-        focus() {
-            this.focused = true;
-        },
-        select() {
-            this.selected = true;
-        },
-        remove() {
-            this.removed = true;
-        },
-    };
+    function createTextArea() {
+        const textArea = {
+            value: '',
+            className: '',
+            attributes: {},
+            focused: false,
+            selected: false,
+            removed: false,
+            classList: {
+                contains(name) {
+                    return textArea.className.split(/\s+/).includes(name);
+                },
+            },
+            setAttribute(name, value) {
+                this.attributes[name] = value;
+            },
+            focus() {
+                this.focused = true;
+            },
+            select() {
+                this.selected = true;
+            },
+            remove() {
+                this.removed = true;
+                if (currentField === this) currentField = null;
+            },
+        };
+        textAreas.push(textArea);
+        return textArea;
+    }
     global.window = {
         translations: {
             copiedText: 'Copied',
@@ -90,12 +106,12 @@ function createClipboardFixture({ clipboard, textAreaError = false } = {}) {
         createElement(tag) {
             assert.equal(tag, 'textarea');
             if (textAreaError) throw new Error('textarea unavailable');
-            return textArea;
+            return createTextArea();
         },
     };
     setNavigator(clipboard === undefined ? {} : { clipboard });
 
-    return { button, feedback, inserted, textArea };
+    return { button, feedback, inserted, textAreas };
 }
 
 async function runWithoutTimers(callback) {
@@ -113,15 +129,28 @@ test('copyToClipboard shows a manual copy field when the Clipboard API is unavai
 
     await runWithoutTimers(() => copyToClipboard(fixture.button));
 
+    const field = fixture.textAreas[0];
     assert.equal(fixture.inserted.length, 1);
     assert.equal(fixture.inserted[0].position, 'after');
-    assert.equal(fixture.inserted[0].element, fixture.textArea);
-    assert.equal(fixture.textArea.value, 'srt://example.test:4000?streamid=play');
-    assert.equal(fixture.textArea.attributes.readonly, '');
-    assert.equal(fixture.textArea.className, 'manual-copy-field');
-    assert.equal(fixture.textArea.focused, true);
-    assert.equal(fixture.textArea.selected, true);
+    assert.equal(fixture.inserted[0].element, field);
+    assert.equal(field.value, 'srt://example.test:4000?streamid=play');
+    assert.equal(field.attributes.readonly, '');
+    assert.equal(field.className, 'manual-copy-field');
+    assert.equal(field.focused, true);
+    assert.equal(field.selected, true);
     assert.equal(fixture.feedback.textContent, 'Copy manually (Ctrl+C)');
+});
+
+test('copyToClipboard replaces an existing manual copy field', async () => {
+    const fixture = createClipboardFixture();
+
+    await runWithoutTimers(() => copyToClipboard(fixture.button));
+    await runWithoutTimers(() => copyToClipboard(fixture.button));
+
+    assert.equal(fixture.textAreas.length, 2);
+    assert.equal(fixture.textAreas[0].removed, true);
+    assert.equal(fixture.textAreas[1].removed, false);
+    assert.equal(fixture.feedback.nextElementSibling, fixture.textAreas[1]);
 });
 
 test('copyToClipboard shows an error when the manual field cannot be created', async () => {
@@ -147,6 +176,7 @@ test('copyToClipboard uses the Clipboard API when it is available', async () => 
 
     assert.equal(written, 'srt://example.test:4000?streamid=play');
     assert.equal(fixture.inserted.length, 0);
+    assert.equal(fixture.textAreas.length, 0);
     assert.equal(fixture.feedback.textContent, 'Copied');
 });
 

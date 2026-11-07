@@ -102,6 +102,9 @@ msgstr "Copied"
 msgid "Copy manually (Ctrl+C)"
 msgstr "Copy manually (Ctrl+C)"
 
+msgid "Failed to fetch streams from the SLS API."
+msgstr "Failed to fetch streams from the SLS API."
+
 msgid "Create"
 msgstr "Create"
 

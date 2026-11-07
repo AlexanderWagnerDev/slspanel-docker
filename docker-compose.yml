@@ -4,7 +4,7 @@ services:
     container_name: slspanel
     restart: unless-stopped
     environment:
-      - LANG=${LANG:-en}
+      - LANG=${SLS_LANG:-en}
       - TZ=${TZ:-UTC}
       - SLS_API_URL=${SLS_API_URL:-http://sls-api-url:8789}
       - SLS_API_KEY=${SLS_API_KEY:-yourapikey}
@@ -19,6 +19,8 @@ services:
       - REQUIRE_LOGIN=${REQUIRE_LOGIN:-True}
       - USERNAME=${SLS_ADMIN_USERNAME:-admin}
       - PASSWORD=${SLS_ADMIN_PASSWORD:-password}
+      - CSRF_TRUSTED_ORIGINS=${CSRF_TRUSTED_ORIGINS:-}
+      - SECURE_PROXY_SSL_HEADER=${SECURE_PROXY_SSL_HEADER:-}
       # Optional: required when running behind a reverse proxy (e.g. Cloudflare Tunnel)
       # - CSRF_TRUSTED_ORIGINS=https://mydomain.com,https://*.trycloudflare.com
       # - SECURE_PROXY_SSL_HEADER=true

@@ -38,6 +38,8 @@ function copyToClipboardFallback(text, element) {
         textArea.className = 'manual-copy-field';
         const feedback = element.nextElementSibling;
         const anchor = feedback?.classList.contains('copy-feedback') ? feedback : element;
+        const existing = anchor.nextElementSibling;
+        if (existing?.classList?.contains('manual-copy-field')) existing.remove();
         anchor.after(textArea);
         textArea.focus();
         textArea.select();

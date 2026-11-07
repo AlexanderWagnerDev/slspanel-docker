@@ -41,7 +41,7 @@ environment:
   # ... more settings
 ```
 
-When using `.env`, set `SLS_ADMIN_USERNAME` and `SLS_ADMIN_PASSWORD`; the Compose file maps them to the container's `USERNAME` and `PASSWORD`.
+When using `.env`, set `SLS_LANG`, `SLS_ADMIN_USERNAME`, and `SLS_ADMIN_PASSWORD`; the Compose file maps them to the container's `LANG`, `USERNAME`, and `PASSWORD`. Do not commit the real `.env` because it contains credentials.
 
 3. Start the container:
 ```bash
@@ -95,7 +95,7 @@ docker run -d \
 | `SLS_STATS_SCHEME` | Scheme for statistics URLs (`http`/`https`) | `http` | No |
 | `SLS_STATS_PORT` | SLS statistics port | `8789` | Yes |
 
-When `REQUIRE_LOGIN=True`, `PASSWORD` must be non-empty and must not be the literal example password `password`. The container refuses to start otherwise. If an existing database still contains a superuser with the example password, startup also fails and asks the operator to change or deactivate that account; no account is modified automatically. Because the SQLite database is ephemeral, recreating the container also starts from a fresh database.
+When `REQUIRE_LOGIN=True`, `PASSWORD` must be non-empty and must not be the literal example password `password`. The container refuses to start otherwise. If an existing database still contains a superuser with the example password, startup also fails and asks the operator to change or deactivate that account. That legacy account is not modified automatically; the configured operator account is created or updated before this check. Because the SQLite database is ephemeral, recreating the container also starts from a fresh database.
 
 ### Example Configuration
 
@@ -187,7 +187,7 @@ environment:
   # ... weitere Einstellungen
 ```
 
-Bei Verwendung von `.env` `SLS_ADMIN_USERNAME` und `SLS_ADMIN_PASSWORD` setzen; die Compose-Datei überträgt sie auf `USERNAME` und `PASSWORD` des Containers.
+Bei Verwendung von `.env` `SLS_LANG`, `SLS_ADMIN_USERNAME` und `SLS_ADMIN_PASSWORD` setzen; die Compose-Datei überträgt sie auf `LANG`, `USERNAME` und `PASSWORD` des Containers. Die echte `.env` nicht committen, da sie Zugangsdaten enthält.
 
 3. Container starten:
 ```bash
@@ -241,7 +241,7 @@ docker run -d \
 | `SLS_STATS_SCHEME` | Schema für Statistik-URLs (`http`/`https`) | `http` | Nein |
 | `SLS_STATS_PORT` | SLS Statistik-Port | `8789` | Ja |
 
-Wenn `REQUIRE_LOGIN=True` gesetzt ist, muss `PASSWORD` nicht leer und darf nicht das literale Beispielpasswort `password` sein. Der Container startet sonst nicht. Enthält eine bestehende Datenbank noch einen Superuser mit dem Beispielpasswort, schlägt der Start ebenfalls fehl und fordert den Betreiber auf, dieses Konto zu ändern oder zu deaktivieren; Konten werden nicht automatisch verändert. Da die SQLite-Datenbank ephemer ist, startet auch ein neu erstellter Container mit einer frischen Datenbank.
+Wenn `REQUIRE_LOGIN=True` gesetzt ist, muss `PASSWORD` nicht leer und darf nicht das literale Beispielpasswort `password` sein. Der Container startet sonst nicht. Enthält eine bestehende Datenbank noch einen Superuser mit dem Beispielpasswort, schlägt der Start ebenfalls fehl und fordert den Betreiber auf, dieses Konto zu ändern oder zu deaktivieren. Dieses Altkonto wird nicht automatisch verändert; das konfigurierte Betreiberkonto wird vor dieser Prüfung erstellt oder aktualisiert. Da die SQLite-Datenbank ephemer ist, startet auch ein neu erstellter Container mit einer frischen Datenbank.
 
 ### Beispiel-Konfiguration
 

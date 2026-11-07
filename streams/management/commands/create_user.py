@@ -18,11 +18,13 @@ class Command(BaseCommand):
         password = os.getenv("PASSWORD") or os.getenv("WEB_PASSWORD")
         if not password:
             raise CommandError(
-                "PASSWORD (or WEB_PASSWORD) must be set when REQUIRE_LOGIN is enabled."
+                "PASSWORD (or WEB_PASSWORD) must be set when REQUIRE_LOGIN is enabled "
+                "(for Docker Compose, set SLS_ADMIN_PASSWORD)."
             )
         if password == "password":
             raise CommandError(
-                "PASSWORD must not use the example default value; choose a strong password."
+                "PASSWORD must not use the example default value 'password'; choose a strong password "
+                "(for Docker Compose, set SLS_ADMIN_PASSWORD)."
             )
 
         user, created = User.objects.get_or_create(username=username, defaults={"email": ""})
@@ -37,7 +39,7 @@ class Command(BaseCommand):
         # change or deactivate it explicitly.
         legacy_users = [
             legacy_user
-            for legacy_user in User.objects.filter(is_superuser=True).exclude(username=username)
+            for legacy_user in User.objects.filter(is_superuser=True, is_active=True).exclude(username=username)
             if legacy_user.check_password("password")
         ]
         if legacy_users:
