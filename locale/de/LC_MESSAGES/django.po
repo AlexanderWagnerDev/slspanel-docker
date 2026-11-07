@@ -99,6 +99,9 @@ msgstr "Beschreibung"
 msgid "Copied"
 msgstr "Kopiert"
 
+msgid "Copy manually (Ctrl+C)"
+msgstr "Manuell kopieren (Strg+C)"
+
 msgid "Create"
 msgstr "Erstellen"
 

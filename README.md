@@ -90,11 +90,12 @@ docker run -d \
 | `SRT_PUBLISH_PORT` | SRT publishing port | `4001` | Yes |
 | `SRT_PLAYER_PORT` | SRT playback port | `4000` | Yes |
 | `SRTLA_PUBLISH_PORT` | SRTLA publishing port | `5000` | Yes |
-| `SLS_STATS_DOMAIN_IP` | Domain or IP for statistics URLs | `SLS_DOMAIN_IP` | No |
+| `SLS_STATS_DOMAIN_IP` | Internal domain or IP used by the panel for statistics | `SLS_DOMAIN_IP` | No |
+| `SLS_STATS_PUBLIC_DOMAIN_IP` | Public domain or IP used in copied statistics URLs | `SLS_STATS_DOMAIN_IP` | No |
 | `SLS_STATS_SCHEME` | Scheme for statistics URLs (`http`/`https`) | `http` | No |
 | `SLS_STATS_PORT` | SLS statistics port | `8789` | Yes |
 
-When `REQUIRE_LOGIN=True`, `PASSWORD` must be non-empty and must not be the literal example password `password`. The container refuses to start otherwise and deactivates a legacy superuser account that still uses the old example password.
+When `REQUIRE_LOGIN=True`, `PASSWORD` must be non-empty and must not be the literal example password `password`. The container refuses to start otherwise. If an existing database still contains a superuser with the example password, startup also fails and asks the operator to change or deactivate that account; no account is modified automatically. Because the SQLite database is ephemeral, recreating the container also starts from a fresh database.
 
 ### Example Configuration
 
@@ -235,11 +236,12 @@ docker run -d \
 | `SRT_PUBLISH_PORT` | SRT Publishing-Port | `4001` | Ja |
 | `SRT_PLAYER_PORT` | SRT Playback-Port | `4000` | Ja |
 | `SRTLA_PUBLISH_PORT` | SRTLA Publishing-Port | `5000` | Ja |
-| `SLS_STATS_DOMAIN_IP` | Domain oder IP für Statistik-URLs | `SLS_DOMAIN_IP` | Nein |
+| `SLS_STATS_DOMAIN_IP` | Interne Domain oder IP für Statistik-Aufrufe des Panels | `SLS_DOMAIN_IP` | Nein |
+| `SLS_STATS_PUBLIC_DOMAIN_IP` | Öffentliche Domain oder IP in kopierten Statistik-URLs | `SLS_STATS_DOMAIN_IP` | Nein |
 | `SLS_STATS_SCHEME` | Schema für Statistik-URLs (`http`/`https`) | `http` | Nein |
 | `SLS_STATS_PORT` | SLS Statistik-Port | `8789` | Ja |
 
-Wenn `REQUIRE_LOGIN=True` gesetzt ist, muss `PASSWORD` nicht leer und darf nicht das literale Beispielpasswort `password` sein. Der Container startet sonst nicht und deaktiviert ein bestehendes Superuser-Konto, das noch das alte Beispielpasswort verwendet.
+Wenn `REQUIRE_LOGIN=True` gesetzt ist, muss `PASSWORD` nicht leer und darf nicht das literale Beispielpasswort `password` sein. Der Container startet sonst nicht. Enthält eine bestehende Datenbank noch einen Superuser mit dem Beispielpasswort, schlägt der Start ebenfalls fehl und fordert den Betreiber auf, dieses Konto zu ändern oder zu deaktivieren; Konten werden nicht automatisch verändert. Da die SQLite-Datenbank ephemer ist, startet auch ein neu erstellter Container mit einer frischen Datenbank.
 
 ### Beispiel-Konfiguration
 

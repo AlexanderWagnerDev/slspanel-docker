@@ -28,31 +28,40 @@ async function copyToClipboard(element) {
     copyToClipboardFallback(text, element);
 }
 function copyToClipboardFallback(text, element) {
-    // navigator.clipboard is unavailable on plain-HTTP origins. Keep a
-    // temporary textarea fallback for the documented non-TLS deployment.
-    const textArea = document.createElement('textarea');
-    textArea.value = text;
-    textArea.style.cssText = 'position:fixed;top:0;left:0;width:2em;height:2em;padding:0;border:none;outline:none;box-shadow:none;background:transparent;opacity:0;';
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
+    // navigator.clipboard is unavailable on plain-HTTP origins. Show the value
+    // in a temporary read-only field so the user can copy it with Ctrl+C.
+    // This avoids deprecated clipboard APIs.
     try {
-        const successful = document.execCommand('copy');
-        if (successful) {
-            showCopyFeedback(element);
-        } else {
-            showCopyError(element);
-        }
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.setAttribute('readonly', '');
+        textArea.className = 'manual-copy-field';
+        const feedback = element.nextElementSibling;
+        const anchor = feedback && feedback.classList.contains('copy-feedback') ? feedback : element;
+        anchor.insertAdjacentElement('afterend', textArea);
+        textArea.focus();
+        textArea.select();
+        showCopyManual(element);
+        setTimeout(() => textArea.remove(), 5000);
     } catch (err) {
         showCopyError(element);
-    } finally {
-        textArea.remove();
     }
 }
 function showCopyFeedback(element) {
     const feedback = element.nextElementSibling;
     if(feedback) {
         feedback.textContent = window.translations.copiedText;
+        feedback.classList.add('visible');
+        setTimeout(() => {
+            feedback.textContent = '';
+            feedback.classList.remove('visible');
+        }, 2000);
+    }
+}
+function showCopyManual(element) {
+    const feedback = element.nextElementSibling;
+    if(feedback && feedback.classList.contains('copy-feedback')) {
+        feedback.textContent = window.translations.copyManual;
         feedback.classList.add('visible');
         setTimeout(() => {
             feedback.textContent = '';

@@ -53,6 +53,24 @@ button.copy-button.blur-text {
 .copy-feedback.visible {
     display: inline;
 }
+.manual-copy-field {
+    width: 100%;
+    margin-top: 0.25rem;
+    font-family: monospace;
+    font-size: 0.85rem;
+}
+.list-group-item .d-flex {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+.list-group-item .d-flex > strong {
+    min-width: 0;
+    flex: 1 1 auto;
+}
+.copy-button {
+    overflow-wrap: anywhere;
+    white-space: normal;
+}
 .bg-dark.bg-opacity-50 {
     background-color: rgba(33, 37, 41, 0.5) !important;
 }

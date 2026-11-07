@@ -91,16 +91,16 @@
                             <span class="copy-feedback"></span><br>
                             <strong>{% trans "Stats URL" %}:</strong>
                             <button type="button" class="copy-button blur-text"
-                                  data-url="{{ sls_stats_scheme }}://{{ sls_stats_domain_ip }}:{{ sls_stats_port }}/stats/{{ player.key }}"
+                                  data-url="{{ sls_stats_scheme }}://{{ sls_stats_public_domain_ip }}:{{ sls_stats_port }}/stats/{{ player.key }}"
                                   onclick="copyToClipboard(this)" onkeyup="if(event.key==='Enter') copyToClipboard(this)">
-                                {{ sls_stats_scheme }}://{{ sls_stats_domain_ip }}:{{ sls_stats_port }}/stats/{{ player.key }}
+                                {{ sls_stats_scheme }}://{{ sls_stats_public_domain_ip }}:{{ sls_stats_port }}/stats/{{ player.key }}
                             </button>
                             <span class="copy-feedback"></span><br>
                             <strong>{% trans "Stats Legacy URL" %}:</strong>
                             <button type="button" class="copy-button blur-text"
-                                  data-url="{{ sls_stats_scheme }}://{{ sls_stats_domain_ip }}:{{ sls_stats_port }}/stats/{{ player.key }}?legacy=1"
+                                  data-url="{{ sls_stats_scheme }}://{{ sls_stats_public_domain_ip }}:{{ sls_stats_port }}/stats/{{ player.key }}?legacy=1"
                                   onclick="copyToClipboard(this)" onkeyup="if(event.key==='Enter') copyToClipboard(this)">
-                                {{ sls_stats_scheme }}://{{ sls_stats_domain_ip }}:{{ sls_stats_port }}/stats/{{ player.key }}?legacy=1
+                                {{ sls_stats_scheme }}://{{ sls_stats_public_domain_ip }}:{{ sls_stats_port }}/stats/{{ player.key }}?legacy=1
                             </button>
                             <span class="copy-feedback"></span>
                         </div>

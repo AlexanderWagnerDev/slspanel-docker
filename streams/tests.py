@@ -68,21 +68,23 @@ class CreateUserCommandTests(TestCase):
 
         self.assertFalse(User.objects.exists())
 
-    def test_legacy_default_password_account_is_deactivated(self):
+    def test_legacy_default_password_account_blocks_startup(self):
         legacy = User.objects.create_superuser(username="admin", email="", password="password")
 
-        self._run_with_env(
-            REQUIRE_LOGIN="True",
-            USERNAME="operator",
-            PASSWORD="strong-password",
-        )
+        with self.assertRaises(CommandError):
+            self._run_with_env(
+                REQUIRE_LOGIN="True",
+                USERNAME="operator",
+                PASSWORD="strong-password",
+            )
 
         legacy.refresh_from_db()
-        self.assertFalse(legacy.is_active)
-        self.assertTrue(User.objects.get(username="operator").is_active)
+        self.assertTrue(legacy.is_active)
+        self.assertTrue(User.objects.filter(username="operator").exists())
 
-    def test_default_require_login_matches_settings(self):
-        self.assertFalse(project_settings.REQUIRE_LOGIN)
+    def test_default_require_login_is_disabled(self):
+        # The imported settings value depends on the test process environment.
+        # The command default is the startup contract that matters here.
         self._run_with_env(USERNAME="alice", PASSWORD="s3cret")
 
         self.assertFalse(User.objects.exists())
@@ -152,6 +154,7 @@ class LanguageConfigurationTests(TestCase):
         self.assertEqual(response.url, "/de/")
 
 
+@override_settings(LANGUAGE_CODE="en")
 class IndexTemplateTests(TestCase):
     """The copied statistics URL must use the configured statistics host."""
 
@@ -159,6 +162,7 @@ class IndexTemplateTests(TestCase):
         REQUIRE_LOGIN=False,
         SLS_DOMAIN_IP="stream.example",
         SLS_STATS_DOMAIN_IP="stats.example",
+        SLS_STATS_PUBLIC_DOMAIN_IP="",
         SLS_STATS_PORT=8789,
         SLS_STATS_SCHEME="https",
         SRT_PUBLISH_PORT=4001,
@@ -178,6 +182,24 @@ class IndexTemplateTests(TestCase):
         self.assertIn("srt://stream.example:4001?streamid=pub", content)
         self.assertIn("srt://stream.example:4000?streamid=play", content)
 
+    @override_settings(
+        REQUIRE_LOGIN=False,
+        SLS_DOMAIN_IP="stream.example",
+        SLS_STATS_DOMAIN_IP="internal.example",
+        SLS_STATS_PUBLIC_DOMAIN_IP="public.example",
+        SLS_STATS_PORT=8789,
+        SLS_STATS_SCHEME="https",
+    )
+    def test_statistics_urls_use_public_domain(self):
+        entries = [{"publisher": "pub", "player": "play", "description": "desc"}]
+        with patch("streams.views._fetch_stream_entries", return_value=entries):
+            with translation.override("en"):
+                response = Client().get("/en/")
+
+        content = response.content.decode()
+        self.assertIn("https://public.example:8789/stats/play", content)
+        self.assertNotIn("https://internal.example:8789/stats/play", content)
+
     @override_settings(REQUIRE_LOGIN=False)
     def test_index_surfaces_stream_fetch_failure(self):
         with patch("streams.views._fetch_stream_entries", return_value=None):
@@ -191,6 +213,7 @@ class IndexTemplateTests(TestCase):
         REQUIRE_LOGIN=False,
         SLS_DOMAIN_IP="stream.example",
         SLS_STATS_DOMAIN_IP="",
+        SLS_STATS_PUBLIC_DOMAIN_IP="",
         SLS_STATS_PORT=8789,
         SLS_STATS_SCHEME="http",
     )
@@ -227,6 +250,7 @@ class InitConfigTests(TestCase):
         self.assertEqual(Configuration.objects.get(id=1).language, "de")
 
 
+@override_settings(LANGUAGE_CODE="en")
 class SessionLifecycleTests(TestCase):
     """Logout must revoke the session, not only clear the browser cookie."""
 
@@ -247,6 +271,7 @@ class SessionLifecycleTests(TestCase):
         self.assertIn("/en/login/", response.url)
 
 
+@override_settings(LANGUAGE_CODE="en")
 class InputValidationTests(TestCase):
     """Security regression tests for paths and keys that reach the SLS API."""
 
@@ -260,6 +285,24 @@ class InputValidationTests(TestCase):
 
         self.assertFalse(_is_safe_endpoint("/api/stream-ids\n"))
 
+    @override_settings(
+        REQUIRE_LOGIN=False,
+        SLS_STATS_DOMAIN_IP="internal.example",
+        SLS_STATS_PUBLIC_DOMAIN_IP="public.example",
+        SLS_STATS_PORT=8789,
+        SLS_STATS_SCHEME="http",
+    )
+    def test_stats_proxy_uses_internal_domain(self):
+        response = Mock()
+        response.raise_for_status.return_value = None
+        response.json.return_value = {"publisher": {}, "status": "ok"}
+        with patch("streams.views.requests.get", return_value=response) as get:
+            result = Client().get("/en/sls-stats/play_ok/")
+
+        self.assertEqual(result.status_code, 200)
+        self.assertIn("internal.example", get.call_args.args[0])
+        self.assertNotIn("public.example", get.call_args.args[0])
+
     @override_settings(REQUIRE_LOGIN=False)
     def test_stats_proxy_rejects_non_object_response(self):
         response = Mock()
@@ -270,6 +313,14 @@ class InputValidationTests(TestCase):
 
         self.assertEqual(result.status_code, 502)
         self.assertEqual(result.json()["status"], "error")
+
+    @override_settings(REQUIRE_LOGIN=False)
+    def test_streams_status_reports_fetch_failure(self):
+        with patch("streams.views._fetch_stream_entries", return_value=None):
+            response = Client().get("/en/api/streams-status/")
+
+        self.assertEqual(response.status_code, 502)
+        self.assertEqual(response.json()["status"], "error")
 
     @override_settings(REQUIRE_LOGIN=False)
     def test_delete_stream_reports_fetch_failure(self):

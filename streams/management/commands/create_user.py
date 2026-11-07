@@ -32,19 +32,20 @@ class Command(BaseCommand):
         user.set_password(password)
         user.save()
 
-        # Deactivate legacy accounts that still use the old example password.
-        # This covers upgrades where the configured username changed and an
-        # old admin/password superuser would otherwise remain usable.
-        legacy_users = User.objects.filter(is_superuser=True).exclude(username=username)
-        for legacy_user in legacy_users:
-            if legacy_user.check_password("password"):
-                legacy_user.is_active = False
-                legacy_user.save(update_fields=["is_active"])
-                self.stdout.write(
-                    self.style.WARNING(
-                        f"Deactivated legacy default-password account '{legacy_user.username}'."
-                    )
-                )
+        # Do not silently alter other accounts. Fail closed when an old
+        # superuser still uses the known example password; the operator must
+        # change or deactivate it explicitly.
+        legacy_users = [
+            legacy_user
+            for legacy_user in User.objects.filter(is_superuser=True).exclude(username=username)
+            if legacy_user.check_password("password")
+        ]
+        if legacy_users:
+            names = ", ".join(sorted(user.username for user in legacy_users))
+            raise CommandError(
+                "Legacy superuser account(s) still use the example password: "
+                f"{names}. Change the password or deactivate them before starting."
+            )
 
         if created:
             self.stdout.write(self.style.SUCCESS(f"User '{username}' was created."))

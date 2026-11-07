@@ -149,6 +149,9 @@ def index(request):
         'srtla_publish_port': settings.SRTLA_PUBLISH_PORT,
         'sls_domain_ip': settings.SLS_DOMAIN_IP,
         'sls_stats_domain_ip': getattr(settings, 'SLS_STATS_DOMAIN_IP', '') or settings.SLS_DOMAIN_IP,
+        'sls_stats_public_domain_ip': getattr(settings, 'SLS_STATS_PUBLIC_DOMAIN_IP', '')
+        or getattr(settings, 'SLS_STATS_DOMAIN_IP', '')
+        or settings.SLS_DOMAIN_IP,
         'sls_stats_port': settings.SLS_STATS_PORT,
         'sls_stats_scheme': getattr(settings, 'SLS_STATS_SCHEME', 'http'),
     }
@@ -158,7 +161,16 @@ def index(request):
 @require_GET
 @conditional_login_required
 def streams_status_json(request):
-    entries = _fetch_stream_entries() or []
+    entries = _fetch_stream_entries()
+    if entries is None:
+        return JsonResponse(
+            {
+                "streams": [],
+                "error": "Failed to fetch streams from the SLS API.",
+                "status": "error",
+            },
+            status=502,
+        )
     publisher_map = {}
     for entry in entries:
         pub = entry.get("publisher")

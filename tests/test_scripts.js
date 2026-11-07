@@ -16,8 +16,6 @@ global.document = {
     getElementById() { return null; },
     querySelectorAll() { return []; },
     createElement() { return null; },
-    body: { appendChild() {}, removeChild() {} },
-    execCommand() { return false; },
 };
 Object.defineProperty(globalThis, 'navigator', {
     configurable: true,
@@ -35,29 +33,52 @@ function setNavigator(value) {
     });
 }
 
-function createClipboardFixture({ clipboard, execResult = true } = {}) {
+function createClipboardFixture({ clipboard, textAreaError = false } = {}) {
+    const inserted = [];
     const feedback = {
         textContent: '',
         classList: {
             add() {},
             remove() {},
+            contains(name) {
+                return name === 'copy-feedback';
+            },
+        },
+        insertAdjacentElement(position, element) {
+            inserted.push({ position, element });
         },
     };
     const button = {
         dataset: { url: 'srt://example.test:4000?streamid=play' },
         nextElementSibling: feedback,
+        insertAdjacentElement(position, element) {
+            inserted.push({ position, element });
+        },
     };
     const textArea = {
         value: '',
-        style: {},
-        focus() {},
-        select() {},
-        remove() {},
+        className: '',
+        attributes: {},
+        focused: false,
+        selected: false,
+        removed: false,
+        setAttribute(name, value) {
+            this.attributes[name] = value;
+        },
+        focus() {
+            this.focused = true;
+        },
+        select() {
+            this.selected = true;
+        },
+        remove() {
+            this.removed = true;
+        },
     };
-    const execCalls = [];
     global.window = {
         translations: {
             copiedText: 'Copied',
+            copyManual: 'Copy manually (Ctrl+C)',
             copyError: 'Copy failed',
         },
     };
@@ -68,22 +89,13 @@ function createClipboardFixture({ clipboard, execResult = true } = {}) {
         querySelectorAll() { return []; },
         createElement(tag) {
             assert.equal(tag, 'textarea');
+            if (textAreaError) throw new Error('textarea unavailable');
             return textArea;
-        },
-        body: {
-            appendChild(element) {
-                assert.equal(element, textArea);
-            },
-            removeChild() {},
-        },
-        execCommand(command) {
-            execCalls.push(command);
-            return execResult;
         },
     };
     setNavigator(clipboard === undefined ? {} : { clipboard });
 
-    return { button, feedback, execCalls, textArea };
+    return { button, feedback, inserted, textArea };
 }
 
 async function runWithoutTimers(callback) {
@@ -96,21 +108,28 @@ async function runWithoutTimers(callback) {
     }
 }
 
-test('copyToClipboard falls back to execCommand when the Clipboard API is unavailable', async () => {
+test('copyToClipboard shows a manual copy field when the Clipboard API is unavailable', async () => {
     const fixture = createClipboardFixture();
 
     await runWithoutTimers(() => copyToClipboard(fixture.button));
 
-    assert.deepEqual(fixture.execCalls, ['copy']);
-    assert.equal(fixture.feedback.textContent, 'Copied');
+    assert.equal(fixture.inserted.length, 1);
+    assert.equal(fixture.inserted[0].position, 'afterend');
+    assert.equal(fixture.inserted[0].element, fixture.textArea);
+    assert.equal(fixture.textArea.value, 'srt://example.test:4000?streamid=play');
+    assert.equal(fixture.textArea.attributes.readonly, '');
+    assert.equal(fixture.textArea.className, 'manual-copy-field');
+    assert.equal(fixture.textArea.focused, true);
+    assert.equal(fixture.textArea.selected, true);
+    assert.equal(fixture.feedback.textContent, 'Copy manually (Ctrl+C)');
 });
 
-test('copyToClipboard shows an error when the fallback also fails', async () => {
-    const fixture = createClipboardFixture({ execResult: false });
+test('copyToClipboard shows an error when the manual field cannot be created', async () => {
+    const fixture = createClipboardFixture({ textAreaError: true });
 
     await runWithoutTimers(() => copyToClipboard(fixture.button));
 
-    assert.deepEqual(fixture.execCalls, ['copy']);
+    assert.equal(fixture.inserted.length, 0);
     assert.equal(fixture.feedback.textContent, 'Copy failed');
 });
 
@@ -127,7 +146,7 @@ test('copyToClipboard uses the Clipboard API when it is available', async () => 
     await runWithoutTimers(() => copyToClipboard(fixture.button));
 
     assert.equal(written, 'srt://example.test:4000?streamid=play');
-    assert.deepEqual(fixture.execCalls, []);
+    assert.equal(fixture.inserted.length, 0);
     assert.equal(fixture.feedback.textContent, 'Copied');
 });
 
@@ -142,8 +161,6 @@ test('loadStats encodes player keys in the request path', () => {
         },
         querySelectorAll() { return []; },
         createElement() { return {}; },
-        body: { appendChild() {}, removeChild() {} },
-        execCommand() { return true; },
     };
     global.window = {
         translations: {

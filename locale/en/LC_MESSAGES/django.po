@@ -99,6 +99,9 @@ msgstr "Description"
 msgid "Copied"
 msgstr "Copied"
 
+msgid "Copy manually (Ctrl+C)"
+msgstr "Copy manually (Ctrl+C)"
+
 msgid "Create"
 msgstr "Create"
 
