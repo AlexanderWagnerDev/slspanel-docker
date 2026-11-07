@@ -2,7 +2,7 @@ FROM alexanderwagnerdev/alpine:builder AS builder
 
 RUN apk update && \
     apk upgrade && \
-    apk add --no-cache python3 py3-pip bash gettext tzdata && \
+    apk add --no-cache bash gettext py3-pip python3 tzdata && \
     rm -rf /var/cache/apk/*
 
 WORKDIR /app
@@ -11,7 +11,12 @@ COPY . .
 
 RUN python3 -m venv /venv
 
-RUN /bin/sh -c "source /venv/bin/activate && pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt && python3 manage.py compilemessages && python3 manage.py collectstatic --noinput && python3 manage.py makemigrations streams"
+RUN /bin/sh -c "source /venv/bin/activate && \
+    pip install --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt && \
+    python3 manage.py compilemessages && \
+    python3 manage.py collectstatic --noinput && \
+    python3 manage.py makemigrations --check --dry-run streams"
 
 ENV PATH="/venv/bin:$PATH"
 
@@ -38,6 +43,6 @@ ENV PATH="/venv/bin:$PATH"
 EXPOSE 8000/tcp
 
 COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+RUN sed -i 's/\r$//' /entrypoint.sh && chmod +x /entrypoint.sh
 
 CMD ["/entrypoint.sh"]
