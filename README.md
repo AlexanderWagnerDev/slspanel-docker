@@ -70,7 +70,7 @@ docker run -d \
   -e SRTLA_PUBLISH_PORT=5000 \
   -e SLS_STATS_PORT=8789 \
   -p 8000:8000/tcp \
-  alexanderwagnerdev/slspanel:latest
+  alexanderwagnerdev/slspanel:beta
 ```
 
 ## ⚙️ Configuration
@@ -216,7 +216,7 @@ docker run -d \
   -e SRTLA_PUBLISH_PORT=5000 \
   -e SLS_STATS_PORT=8789 \
   -p 8000:8000/tcp \
-  alexanderwagnerdev/slspanel:latest
+  alexanderwagnerdev/slspanel:beta
 ```
 
 ## ⚙️ Konfiguration
