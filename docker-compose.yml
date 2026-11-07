@@ -2,7 +2,7 @@ services:
   slspanel:
     image: alexanderwagnerdev/slspanel:latest
     container_name: slspanel
-    restart: unless-stopped
+    restart: always
     environment:
       - LANG=${SLS_LANG:-en}
       - TZ=${TZ:-UTC}
