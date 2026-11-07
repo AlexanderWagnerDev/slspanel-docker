@@ -178,6 +178,15 @@ class IndexTemplateTests(TestCase):
         self.assertIn("srt://stream.example:4001?streamid=pub", content)
         self.assertIn("srt://stream.example:4000?streamid=play", content)
 
+    @override_settings(REQUIRE_LOGIN=False)
+    def test_index_surfaces_stream_fetch_failure(self):
+        with patch("streams.views._fetch_stream_entries", return_value=None):
+            with translation.override("en"):
+                response = Client().get("/en/")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Failed to fetch streams from the SLS API.")
+
     @override_settings(
         REQUIRE_LOGIN=False,
         SLS_DOMAIN_IP="stream.example",

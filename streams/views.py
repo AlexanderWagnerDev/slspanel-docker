@@ -129,8 +129,9 @@ def logout_view(request):
 @require_GET
 @conditional_login_required
 def index(request):
-    entries = _fetch_stream_entries() or []
-    streams = list(_group_by_publisher(entries).values())
+    entries = _fetch_stream_entries()
+    api_error = entries is None
+    streams = list(_group_by_publisher(entries or []).values())
 
     for s in streams:
         if s["player"]:
@@ -142,6 +143,7 @@ def index(request):
 
     context = {
         'streams': streams,
+        'api_error': api_error,
         'srt_publish_port': settings.SRT_PUBLISH_PORT,
         'srt_player_port': settings.SRT_PLAYER_PORT,
         'srtla_publish_port': settings.SRTLA_PUBLISH_PORT,

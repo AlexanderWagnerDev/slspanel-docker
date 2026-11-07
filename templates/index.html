@@ -4,6 +4,9 @@
 
 {% block content %}
 <h1>{% trans 'Streams on SLS-Live-Server' %}</h1>
+{% if api_error %}
+<div class="alert alert-danger" role="alert">{% trans "Failed to fetch streams from the SLS API." %}</div>
+{% endif %}
 <a class="btn btn-outline-light mb-3" href="{% url 'streams:logout' %}">{% trans 'Logout' %}</a>
 <a href="{% url 'streams:create_stream' %}" class="btn btn-success mb-3">{% trans 'Create Stream' %}</a>
 
