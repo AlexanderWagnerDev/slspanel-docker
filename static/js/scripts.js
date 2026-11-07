@@ -16,12 +16,37 @@ document.addEventListener('DOMContentLoaded', function(){
 });
 async function copyToClipboard(element) {
     const text = element.dataset.url;
+    if (navigator.clipboard?.writeText) {
+        try {
+            await navigator.clipboard.writeText(text);
+            showCopyFeedback(element);
+            return;
+        } catch (err) {
+            // Fall through to the legacy path when permission is denied.
+        }
+    }
+    copyToClipboardFallback(text, element);
+}
+function copyToClipboardFallback(text, element) {
+    // navigator.clipboard is unavailable on plain-HTTP origins. Keep a
+    // temporary textarea fallback for the documented non-TLS deployment.
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    textArea.style.cssText = 'position:fixed;top:0;left:0;width:2em;height:2em;padding:0;border:none;outline:none;box-shadow:none;background:transparent;opacity:0;';
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
     try {
-        await navigator.clipboard.writeText(text);
-        showCopyFeedback(element);
+        const successful = document.execCommand('copy');
+        if (successful) {
+            showCopyFeedback(element);
+        } else {
+            showCopyError(element);
+        }
     } catch (err) {
-        // The Clipboard API can be unavailable (e.g. insecure context) or denied by the user.
         showCopyError(element);
+    } finally {
+        textArea.remove();
     }
 }
 function showCopyFeedback(element) {
@@ -72,7 +97,7 @@ function loadStats(playerKey) {
         return;
     }
     const langCode = document.documentElement.lang || 'en';
-    const url = `/${langCode}/sls-stats/${playerKey}/`;
+    const url = `/${langCode}/sls-stats/${encodeURIComponent(playerKey)}/`;
     fetch(url)
         .then(response => {
             if (!response.ok) {
@@ -148,4 +173,8 @@ function formatUptime(seconds) {
     const secs = seconds % 60;
     const time = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
     return days > 0 ? `${days}d ${time}` : time;
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { copyToClipboard, copyToClipboardFallback, loadStats, formatUptime };
 }
