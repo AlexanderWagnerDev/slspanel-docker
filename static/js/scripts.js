@@ -37,8 +37,8 @@ function copyToClipboardFallback(text, element) {
         textArea.setAttribute('readonly', '');
         textArea.className = 'manual-copy-field';
         const feedback = element.nextElementSibling;
-        const anchor = feedback && feedback.classList.contains('copy-feedback') ? feedback : element;
-        anchor.insertAdjacentElement('afterend', textArea);
+        const anchor = feedback?.classList.contains('copy-feedback') ? feedback : element;
+        anchor.after(textArea);
         textArea.focus();
         textArea.select();
         showCopyManual(element);
@@ -60,7 +60,7 @@ function showCopyFeedback(element) {
 }
 function showCopyManual(element) {
     const feedback = element.nextElementSibling;
-    if(feedback && feedback.classList.contains('copy-feedback')) {
+    if(feedback?.classList.contains('copy-feedback')) {
         feedback.textContent = window.translations.copyManual;
         feedback.classList.add('visible');
         setTimeout(() => {

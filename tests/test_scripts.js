@@ -44,15 +44,15 @@ function createClipboardFixture({ clipboard, textAreaError = false } = {}) {
                 return name === 'copy-feedback';
             },
         },
-        insertAdjacentElement(position, element) {
-            inserted.push({ position, element });
+        after(element) {
+            inserted.push({ position: 'after', element });
         },
     };
     const button = {
         dataset: { url: 'srt://example.test:4000?streamid=play' },
         nextElementSibling: feedback,
-        insertAdjacentElement(position, element) {
-            inserted.push({ position, element });
+        after(element) {
+            inserted.push({ position: 'after', element });
         },
     };
     const textArea = {
@@ -114,7 +114,7 @@ test('copyToClipboard shows a manual copy field when the Clipboard API is unavai
     await runWithoutTimers(() => copyToClipboard(fixture.button));
 
     assert.equal(fixture.inserted.length, 1);
-    assert.equal(fixture.inserted[0].position, 'afterend');
+    assert.equal(fixture.inserted[0].position, 'after');
     assert.equal(fixture.inserted[0].element, fixture.textArea);
     assert.equal(fixture.textArea.value, 'srt://example.test:4000?streamid=play');
     assert.equal(fixture.textArea.attributes.readonly, '');
