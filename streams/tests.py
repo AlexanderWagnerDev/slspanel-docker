@@ -1,6 +1,7 @@
 import os
 from unittest.mock import Mock, patch
 
+import requests
 from django.conf import settings as django_settings
 from django.contrib.auth.models import User
 from django.core.management import call_command
@@ -9,6 +10,7 @@ from django.test import Client, RequestFactory, TestCase, override_settings
 from django.utils import translation
 
 from slspanel import settings as project_settings
+from streams import views
 
 
 class CreateUserCommandTests(TestCase):
@@ -403,3 +405,16 @@ class InputValidationTests(TestCase):
             )
 
         self.assertEqual(response.status_code, 400)
+
+    def test_call_api_logs_but_does_not_return_exception_details(self):
+        with self.assertLogs("streams.views", level="WARNING") as logs:
+            with patch(
+                "streams.views.requests.get",
+                side_effect=requests.ConnectionError("internal detail"),
+            ):
+                code, payload = views.call_api("GET", "/api/stream-ids")
+
+        self.assertIsNone(code)
+        self.assertEqual(payload, {})
+        self.assertNotIn("internal detail", str(payload))
+        self.assertIn("SLS API request failed", "\n".join(logs.output))
