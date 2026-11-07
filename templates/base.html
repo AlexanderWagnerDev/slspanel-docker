@@ -1,9 +1,10 @@
 {% load i18n %}
 {% get_current_language as LANGUAGE_CODE %}
 <!DOCTYPE html>
-<html lang="{{ LANGUAGE_CODE }}">
+<html lang="{{ LANGUAGE_CODE }}" data-bs-theme="dark">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}SLSPANEL{% endblock %}</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
@@ -12,6 +13,7 @@
     <script>
     window.translations = window.translations || {};
     window.translations.copiedText = "{% trans 'Copied' %}";
+    window.translations.copyManual = "{% trans 'Copy manually (Ctrl+C)' %}";
     window.translations.copyError = "{% trans 'Copy failed' %}";
     window.translations.streamStatistics = "{% trans 'Stream Statistics' %}";
     window.translations.bitrate = "{% trans 'Bitrate' %}";

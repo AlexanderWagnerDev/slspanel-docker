@@ -4,6 +4,9 @@
 body.dark {
     background: #121212;
     color: #eee;
+    --bs-success-rgb: 117, 183, 152;
+    --bs-danger-rgb: 234, 134, 143;
+    --bs-warning-rgb: 255, 218, 106;
 }
 .bg-dark, .accordion-button.bg-dark {
     background: #222 !important;
@@ -22,6 +25,17 @@ body.dark {
     border-radius: 4px;
     display: inline-block;
 }
+button.copy-button {
+    background: none;
+    border: none;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    padding: 0;
+}
+button.copy-button.blur-text {
+    padding: 2px 4px;
+}
 .blur-text:focus,
 .blur-text:hover {
     filter: none;
@@ -38,6 +52,24 @@ body.dark {
 }
 .copy-feedback.visible {
     display: inline;
+}
+.manual-copy-field {
+    width: 100%;
+    margin-top: 0.25rem;
+    font-family: monospace;
+    font-size: 0.85rem;
+}
+.list-group-item .d-flex {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+.list-group-item .d-flex > strong {
+    min-width: 0;
+    flex: 1 1 auto;
+}
+.copy-button {
+    overflow-wrap: anywhere;
+    white-space: normal;
 }
 .bg-dark.bg-opacity-50 {
     background-color: rgba(33, 37, 41, 0.5) !important;
