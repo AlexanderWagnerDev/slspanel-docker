@@ -5,12 +5,12 @@ from functools import wraps
 import requests
 from django.conf import settings
 from django.contrib.auth import authenticate, login
-from django.http import HttpResponseBadRequest, JsonResponse
+from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import redirect, render
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_GET, require_POST, require_http_methods
 
-API_URL = settings.SLS_API_URL if hasattr(settings, 'SLS_API_URL') else 'http://localhost:8789'
+API_URL = (settings.SLS_API_URL if hasattr(settings, 'SLS_API_URL') else 'http://localhost:8789').rstrip('/')
 API_KEY = settings.SLS_API_KEY if hasattr(settings, 'SLS_API_KEY') else ''
 
 API_STREAM_IDS_ENDPOINT = '/api/stream-ids'
@@ -21,9 +21,9 @@ ADD_PLAYER_TEMPLATE = 'add_player.html'
 
 # Stream keys are used as path segments when calling the SLS API, so they must be
 # restricted to a safe character set to prevent path traversal (e.g. "../").
-STREAM_KEY_RE = re.compile(r'^[A-Za-z0-9_.-]{1,200}$')
+STREAM_KEY_RE = re.compile(r'[A-Za-z0-9_.-]{1,200}')
 # Only allow API endpoints below the fixed /api/ root and reject traversal sequences.
-API_ENDPOINT_RE = re.compile(r'^/api/[A-Za-z0-9_./-]*$')
+API_ENDPOINT_RE = re.compile(r'/api/[A-Za-z0-9_./-]*')
 
 
 def conditional_login_required(view_func):
@@ -39,13 +39,13 @@ def conditional_login_required(view_func):
 def _is_valid_stream_key(key):
     return (
         isinstance(key, str)
-        and bool(STREAM_KEY_RE.match(key))
+        and bool(STREAM_KEY_RE.fullmatch(key))
         and '..' not in key
     )
 
 
 def _is_safe_endpoint(endpoint):
-    if not isinstance(endpoint, str) or not API_ENDPOINT_RE.match(endpoint):
+    if not isinstance(endpoint, str) or not API_ENDPOINT_RE.fullmatch(endpoint):
         return False
     return '..' not in endpoint and '//' not in endpoint
 
@@ -72,10 +72,15 @@ def call_api(method, endpoint, data=None):
 
 
 def _fetch_stream_entries():
-    _, res = call_api('GET', API_STREAM_IDS_ENDPOINT)
-    if res and isinstance(res, dict) and "data" in res:
-        return res.get("data") or []
-    return []
+    code, res = call_api('GET', API_STREAM_IDS_ENDPOINT)
+    if code is None or not (200 <= code < 300):
+        return None
+    if not isinstance(res, dict):
+        return None
+    data = res.get("data")
+    if not isinstance(data, list):
+        return None
+    return [entry for entry in data if isinstance(entry, dict)]
 
 
 def _group_by_publisher(entries):
@@ -125,7 +130,8 @@ def logout_view(request):
 @conditional_login_required
 def index(request):
     entries = _fetch_stream_entries()
-    streams = list(_group_by_publisher(entries).values())
+    api_error = entries is None
+    streams = list(_group_by_publisher(entries or []).values())
 
     for s in streams:
         if s["player"]:
@@ -137,10 +143,15 @@ def index(request):
 
     context = {
         'streams': streams,
+        'api_error': api_error,
         'srt_publish_port': settings.SRT_PUBLISH_PORT,
         'srt_player_port': settings.SRT_PLAYER_PORT,
         'srtla_publish_port': settings.SRTLA_PUBLISH_PORT,
         'sls_domain_ip': settings.SLS_DOMAIN_IP,
+        'sls_stats_domain_ip': getattr(settings, 'SLS_STATS_DOMAIN_IP', '') or settings.SLS_DOMAIN_IP,
+        'sls_stats_public_domain_ip': getattr(settings, 'SLS_STATS_PUBLIC_DOMAIN_IP', '')
+        or getattr(settings, 'SLS_STATS_DOMAIN_IP', '')
+        or settings.SLS_DOMAIN_IP,
         'sls_stats_port': settings.SLS_STATS_PORT,
         'sls_stats_scheme': getattr(settings, 'SLS_STATS_SCHEME', 'http'),
     }
@@ -151,6 +162,15 @@ def index(request):
 @conditional_login_required
 def streams_status_json(request):
     entries = _fetch_stream_entries()
+    if entries is None:
+        return JsonResponse(
+            {
+                "streams": [],
+                "error": "Failed to fetch streams from the SLS API.",
+                "status": "error",
+            },
+            status=502,
+        )
     publisher_map = {}
     for entry in entries:
         pub = entry.get("publisher")
@@ -180,6 +200,8 @@ def sls_stats(request, player_key):
         response = requests.get(url, timeout=5)
         response.raise_for_status()
         data = response.json()
+        if not isinstance(data, dict):
+            return JsonResponse({"error": "Invalid stats response", "status": "error"}, status=502)
         return JsonResponse(data)
     except requests.RequestException:
         return JsonResponse({"error": "Failed to fetch stats", "status": "error"}, status=500)
@@ -203,7 +225,7 @@ def create_stream(request):
             "player": player_key,
             "description": description,
         }
-        code, _ = call_api('POST', API_STREAM_IDS_ENDPOINT, data)
+        code, _payload = call_api('POST', API_STREAM_IDS_ENDPOINT, data)
         if code and 200 <= code < 300:
             return redirect(INDEX_ROUTE)
         else:
@@ -224,7 +246,7 @@ def add_player(request):
             if not _is_valid_stream_key(player_key):
                 return HttpResponseBadRequest(_("Invalid player key"))
             data = {"publisher": publisher_key, "player": player_key, "description": description}
-            code, _ = call_api('POST', API_STREAM_IDS_ENDPOINT, data)
+            code, _payload = call_api('POST', API_STREAM_IDS_ENDPOINT, data)
             if code and 200 <= code < 300:
                 return redirect(INDEX_ROUTE)
             else:
@@ -258,9 +280,13 @@ def delete_stream(request, publisher_key):
         return HttpResponseBadRequest(_("Invalid publisher key"))
 
     entries = _fetch_stream_entries()
+    if entries is None:
+        return HttpResponse(_("Failed to fetch streams from the SLS API."), status=502)
     player_keys = [entry["player"] for entry in entries if entry.get("publisher") == publisher_key and entry.get("player")]
     for play_key in player_keys:
-        call_api('DELETE', f'{API_STREAM_IDS_ENDPOINT}/{play_key}')
+        code, _payload = call_api('DELETE', f'{API_STREAM_IDS_ENDPOINT}/{play_key}')
+        if code is None or not (200 <= code < 300 or code == 404):
+            return HttpResponse(_("Failed to delete stream."), status=502)
     return redirect(INDEX_ROUTE)
 
 
@@ -270,5 +296,7 @@ def delete_player(request, player_key):
     if not _is_valid_stream_key(player_key):
         return HttpResponseBadRequest(_("Invalid player key"))
 
-    call_api('DELETE', f'{API_STREAM_IDS_ENDPOINT}/{player_key}')
+    code, _payload = call_api('DELETE', f'{API_STREAM_IDS_ENDPOINT}/{player_key}')
+    if code is None or not (200 <= code < 300 or code == 404):
+        return HttpResponse(_("Failed to delete player."), status=502)
     return redirect(INDEX_ROUTE)

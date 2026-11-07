@@ -12,13 +12,14 @@ ALLOWED_HOSTS = ["*"]
 REQUIRE_LOGIN = os.getenv('REQUIRE_LOGIN', 'False').lower() in ['true', '1', 'yes']
 
 USERNAME = os.getenv('USERNAME', 'admin')
-PASSWORD = os.getenv('PASSWORD', 'password')
+PASSWORD = os.getenv('PASSWORD', '')
 
 SRT_PUBLISH_PORT = int(os.getenv("SRT_PUBLISH_PORT", 4001))
 SRT_PLAYER_PORT = int(os.getenv("SRT_PLAYER_PORT", 4000))
 SRTLA_PUBLISH_PORT = int(os.getenv("SRTLA_PUBLISH_PORT", 5000))
 SLS_DOMAIN_IP = os.getenv("SLS_DOMAIN_IP", "localhost")
-SLS_STATS_DOMAIN_IP = os.getenv("SLS_STATS_DOMAIN_IP", SLS_DOMAIN_IP)
+SLS_STATS_DOMAIN_IP = os.getenv("SLS_STATS_DOMAIN_IP") or SLS_DOMAIN_IP
+SLS_STATS_PUBLIC_DOMAIN_IP = os.getenv("SLS_STATS_PUBLIC_DOMAIN_IP") or SLS_STATS_DOMAIN_IP
 SLS_STATS_PORT = int(os.getenv("SLS_STATS_PORT", 8789))
 SLS_STATS_SCHEME = os.getenv("SLS_STATS_SCHEME", "http")
 
@@ -28,12 +29,23 @@ SLS_API_KEY = os.getenv("SLS_API_KEY", "")
 USE_I18N = True
 USE_L10N = True
 LOCALE_PATHS = [os.path.join(BASE_DIR, "locale")]
-LANGUAGE_CODE = os.getenv("LANG", "en")
 
 LANGUAGES = [
     ('de', 'Deutsch'),
     ('en', 'English'),
 ]
+SUPPORTED_LANGUAGE_CODES = frozenset(code for code, _ in LANGUAGES)
+
+
+def normalize_language_code(value):
+    """Return a supported Django language code for an arbitrary process locale."""
+    if not value:
+        return "en"
+    base = str(value).strip().split(".", 1)[0].replace("-", "_").split("_", 1)[0].lower()
+    return base if base in SUPPORTED_LANGUAGE_CODES else "en"
+
+
+LANGUAGE_CODE = normalize_language_code(os.getenv("LANG", "en"))
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -79,7 +91,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "slspanel.wsgi.application"
 
-SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
+SESSION_ENGINE = "django.contrib.sessions.backends.db"
 
 DATABASES = {
     'default': {

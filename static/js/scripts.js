@@ -16,11 +16,36 @@ document.addEventListener('DOMContentLoaded', function(){
 });
 async function copyToClipboard(element) {
     const text = element.dataset.url;
+    if (navigator.clipboard?.writeText) {
+        try {
+            await navigator.clipboard.writeText(text);
+            showCopyFeedback(element);
+            return;
+        } catch (err) {
+            // Fall through to the legacy path when permission is denied.
+        }
+    }
+    copyToClipboardFallback(text, element);
+}
+function copyToClipboardFallback(text, element) {
+    // navigator.clipboard is unavailable on plain-HTTP origins. Show the value
+    // in a temporary read-only field so the user can copy it with Ctrl+C.
+    // This avoids deprecated clipboard APIs.
     try {
-        await navigator.clipboard.writeText(text);
-        showCopyFeedback(element);
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.setAttribute('readonly', '');
+        textArea.className = 'manual-copy-field';
+        const feedback = element.nextElementSibling;
+        const anchor = feedback?.classList.contains('copy-feedback') ? feedback : element;
+        const existing = anchor.nextElementSibling;
+        if (existing?.classList?.contains('manual-copy-field')) existing.remove();
+        anchor.after(textArea);
+        textArea.focus();
+        textArea.select();
+        showCopyManual(element);
+        setTimeout(() => textArea.remove(), 5000);
     } catch (err) {
-        // The Clipboard API can be unavailable (e.g. insecure context) or denied by the user.
         showCopyError(element);
     }
 }
@@ -28,6 +53,17 @@ function showCopyFeedback(element) {
     const feedback = element.nextElementSibling;
     if(feedback) {
         feedback.textContent = window.translations.copiedText;
+        feedback.classList.add('visible');
+        setTimeout(() => {
+            feedback.textContent = '';
+            feedback.classList.remove('visible');
+        }, 2000);
+    }
+}
+function showCopyManual(element) {
+    const feedback = element.nextElementSibling;
+    if(feedback?.classList.contains('copy-feedback')) {
+        feedback.textContent = window.translations.copyManual;
         feedback.classList.add('visible');
         setTimeout(() => {
             feedback.textContent = '';
@@ -72,7 +108,7 @@ function loadStats(playerKey) {
         return;
     }
     const langCode = document.documentElement.lang || 'en';
-    const url = `/${langCode}/sls-stats/${playerKey}/`;
+    const url = `/${langCode}/sls-stats/${encodeURIComponent(playerKey)}/`;
     fetch(url)
         .then(response => {
             if (!response.ok) {
@@ -148,4 +184,8 @@ function formatUptime(seconds) {
     const secs = seconds % 60;
     const time = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
     return days > 0 ? `${days}d ${time}` : time;
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { copyToClipboard, copyToClipboardFallback, loadStats, formatUptime };
 }
