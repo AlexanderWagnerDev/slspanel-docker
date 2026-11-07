@@ -1,3 +1,4 @@
+import logging
 import re
 import secrets
 from functools import wraps
@@ -12,6 +13,8 @@ from django.views.decorators.http import require_GET, require_POST, require_http
 
 API_URL = (settings.SLS_API_URL if hasattr(settings, 'SLS_API_URL') else 'http://localhost:8789').rstrip('/')
 API_KEY = settings.SLS_API_KEY if hasattr(settings, 'SLS_API_KEY') else ''
+
+logger = logging.getLogger(__name__)
 
 API_STREAM_IDS_ENDPOINT = '/api/stream-ids'
 INDEX_ROUTE = 'streams:index'
@@ -67,8 +70,9 @@ def call_api(method, endpoint, data=None):
         else:
             return None, "Unsupported method"
         return response.status_code, response.json() if response.content else {}
-    except requests.RequestException as e:
-        return None, str(e)
+    except requests.RequestException:
+        logger.warning("SLS API request failed for %s %s", method, endpoint, exc_info=True)
+        return None, {}
 
 
 def _fetch_stream_entries():
