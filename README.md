@@ -18,7 +18,7 @@ A modern web-based control panel for the IRL SLS live streaming server. Manage y
 
 ### Prerequisites
 
-- Docker and Docker Compose installed
+- Docker and Docker Compose v2 installed
 - Running SLS (srt-live-server) instance
 - SLS API key
 
@@ -41,11 +41,11 @@ environment:
   # ... more settings
 ```
 
-When using `.env`, set `SLS_LANG`, `SLS_ADMIN_USERNAME`, and `SLS_ADMIN_PASSWORD`; the Compose file maps them to the container's `LANG`, `USERNAME`, and `PASSWORD`. Do not commit the real `.env` because it contains credentials.
+When using `.env`, set `SLS_LANG`, `SLS_ADMIN_USERNAME`, and `SLS_ADMIN_PASSWORD`; the Compose file maps them to the container's `LANG`, `USERNAME`, and `PASSWORD`. Docker Compose v2 (`docker compose`) is required; Compose v1 may interpolate `$` inside quoted `.env` values and change passwords. Do not commit the real `.env` because it contains credentials.
 
 3. Start the container:
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 4. Access the panel at `http://localhost:8000`
@@ -123,7 +123,7 @@ environment:
 
 ### View container logs
 ```bash
-docker-compose logs -f slspanel
+docker compose logs -f slspanel
 ```
 
 ## 📝 License
@@ -164,7 +164,7 @@ Ein modernes webbasiertes Control Panel für den IRL SLS Live-Streaming-Server. 
 
 ### Voraussetzungen
 
-- Docker und Docker Compose installiert
+- Docker und Docker Compose v2 installiert
 - Laufende SLS (srt-live-server) Instanz
 - SLS API-Key
 
@@ -187,11 +187,11 @@ environment:
   # ... weitere Einstellungen
 ```
 
-Bei Verwendung von `.env` `SLS_LANG`, `SLS_ADMIN_USERNAME` und `SLS_ADMIN_PASSWORD` setzen; die Compose-Datei überträgt sie auf `LANG`, `USERNAME` und `PASSWORD` des Containers. Die echte `.env` nicht committen, da sie Zugangsdaten enthält.
+Bei Verwendung von `.env` `SLS_LANG`, `SLS_ADMIN_USERNAME` und `SLS_ADMIN_PASSWORD` setzen; die Compose-Datei überträgt sie auf `LANG`, `USERNAME` und `PASSWORD` des Containers. Docker Compose v2 (`docker compose`) ist erforderlich; Compose v1 kann `$` in gequoteten `.env`-Werten interpolieren und Passwörter verändern. Die echte `.env` nicht committen, da sie Zugangsdaten enthält.
 
 3. Container starten:
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 4. Panel unter `http://localhost:8000` aufrufen
@@ -268,7 +268,7 @@ environment:
 
 ### Container-Logs anzeigen
 ```bash
-docker-compose logs -f slspanel
+docker compose logs -f slspanel
 ```
 
 ## 📝 Lizenz
