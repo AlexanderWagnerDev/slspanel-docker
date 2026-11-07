@@ -4,6 +4,9 @@
 body.dark {
     background: #121212;
     color: #eee;
+    --bs-success-rgb: 117, 183, 152;
+    --bs-danger-rgb: 234, 134, 143;
+    --bs-warning-rgb: 255, 218, 106;
 }
 .bg-dark, .accordion-button.bg-dark {
     background: #222 !important;
@@ -52,18 +55,6 @@ button.copy-button.blur-text {
 }
 .bg-dark.bg-opacity-50 {
     background-color: rgba(33, 37, 41, 0.5) !important;
-}
-body.dark .text-success {
-    color: #75b798 !important;
-}
-body.dark .text-danger {
-    color: #ea868f !important;
-}
-body.dark .text-warning {
-    color: #ffda6a !important;
-}
-body.dark .text-muted {
-    color: #a7acb1 !important;
 }
 [id^="stats-"] p {
     margin-top: 0.5rem;

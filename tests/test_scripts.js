@@ -2,13 +2,40 @@
 
 const test = require('node:test');
 const assert = require('node:assert');
-const fs = require('node:fs');
 const path = require('node:path');
-const vm = require('node:vm');
 
-const source = fs.readFileSync(path.join(__dirname, '..', 'static', 'js', 'scripts.js'), 'utf8');
+const scriptPath = path.join(__dirname, '..', 'static', 'js', 'scripts.js');
 
-function createClipboardContext({ clipboard, execResult = true } = {}) {
+// The browser script registers a DOMContentLoaded listener at load time and
+// resolves document/window/navigator at call time. Provide inert defaults for
+// the initial load; each test replaces them with its own fixture.
+global.window = { translations: {} };
+global.document = {
+    addEventListener() {},
+    documentElement: { lang: 'en' },
+    getElementById() { return null; },
+    querySelectorAll() { return []; },
+    createElement() { return null; },
+    body: { appendChild() {}, removeChild() {} },
+    execCommand() { return false; },
+};
+Object.defineProperty(globalThis, 'navigator', {
+    configurable: true,
+    writable: true,
+    value: {},
+});
+
+const { copyToClipboard, loadStats } = require(scriptPath);
+
+function setNavigator(value) {
+    Object.defineProperty(globalThis, 'navigator', {
+        configurable: true,
+        writable: true,
+        value,
+    });
+}
+
+function createClipboardFixture({ clipboard, execResult = true } = {}) {
     const feedback = {
         textContent: '',
         classList: {
@@ -25,9 +52,16 @@ function createClipboardContext({ clipboard, execResult = true } = {}) {
         style: {},
         focus() {},
         select() {},
+        remove() {},
     };
     const execCalls = [];
-    const document = {
+    global.window = {
+        translations: {
+            copiedText: 'Copied',
+            copyError: 'Copy failed',
+        },
+    };
+    global.document = {
         documentElement: { lang: 'en' },
         addEventListener() {},
         getElementById() { return null; },
@@ -40,57 +74,41 @@ function createClipboardContext({ clipboard, execResult = true } = {}) {
             appendChild(element) {
                 assert.equal(element, textArea);
             },
-            removeChild(element) {
-                assert.equal(element, textArea);
-            },
+            removeChild() {},
         },
         execCommand(command) {
             execCalls.push(command);
             return execResult;
         },
     };
-    const window = {
-        translations: {
-            copiedText: 'Copied',
-            copyError: 'Copy failed',
-        },
-    };
-    const navigatorObject = clipboard === undefined ? {} : { clipboard };
-    const context = vm.createContext({
-        window,
-        document,
-        navigator: navigatorObject,
-        setTimeout() {},
-        console,
-        Uint8Array,
-        Array,
-        String,
-        Math,
-    });
+    setNavigator(clipboard === undefined ? {} : { clipboard });
 
-    vm.runInContext(source, context);
+    return { button, feedback, execCalls, textArea };
+}
 
-    return {
-        context,
-        button,
-        feedback,
-        execCalls,
-    };
+async function runWithoutTimers(callback) {
+    const originalSetTimeout = global.setTimeout;
+    global.setTimeout = () => 0;
+    try {
+        return await callback();
+    } finally {
+        global.setTimeout = originalSetTimeout;
+    }
 }
 
 test('copyToClipboard falls back to execCommand when the Clipboard API is unavailable', async () => {
-    const fixture = createClipboardContext();
+    const fixture = createClipboardFixture();
 
-    await fixture.context.copyToClipboard(fixture.button);
+    await runWithoutTimers(() => copyToClipboard(fixture.button));
 
     assert.deepEqual(fixture.execCalls, ['copy']);
     assert.equal(fixture.feedback.textContent, 'Copied');
 });
 
 test('copyToClipboard shows an error when the fallback also fails', async () => {
-    const fixture = createClipboardContext({ execResult: false });
+    const fixture = createClipboardFixture({ execResult: false });
 
-    await fixture.context.copyToClipboard(fixture.button);
+    await runWithoutTimers(() => copyToClipboard(fixture.button));
 
     assert.deepEqual(fixture.execCalls, ['copy']);
     assert.equal(fixture.feedback.textContent, 'Copy failed');
@@ -98,7 +116,7 @@ test('copyToClipboard shows an error when the fallback also fails', async () => 
 
 test('copyToClipboard uses the Clipboard API when it is available', async () => {
     let written;
-    const fixture = createClipboardContext({
+    const fixture = createClipboardFixture({
         clipboard: {
             async writeText(value) {
                 written = value;
@@ -106,7 +124,7 @@ test('copyToClipboard uses the Clipboard API when it is available', async () => 
         },
     });
 
-    await fixture.context.copyToClipboard(fixture.button);
+    await runWithoutTimers(() => copyToClipboard(fixture.button));
 
     assert.equal(written, 'srt://example.test:4000?streamid=play');
     assert.deepEqual(fixture.execCalls, []);
@@ -116,7 +134,7 @@ test('copyToClipboard uses the Clipboard API when it is available', async () => 
 test('loadStats encodes player keys in the request path', () => {
     const requests = [];
     const container = { innerHTML: '' };
-    const document = {
+    global.document = {
         documentElement: { lang: 'en' },
         addEventListener() {},
         getElementById(id) {
@@ -127,55 +145,46 @@ test('loadStats encodes player keys in the request path', () => {
         body: { appendChild() {}, removeChild() {} },
         execCommand() { return true; },
     };
-    const fetch = async (url) => {
-        requests.push(url);
-        return {
-            ok: true,
-            async json() {
-                return {
-                    publisher: {
-                        bitrate: 1,
-                        buffer: 0,
-                        dropped_pkts: 0,
-                        latency: 0,
-                        rtt: 1.5,
-                        uptime: 10,
-                    },
-                    status: 'ok',
-                };
-            },
-        };
-    };
-    const context = vm.createContext({
-        window: {
-            translations: {
-                copiedText: 'Copied',
-                copyError: 'Copy failed',
-                streamStatistics: 'Stream Statistics',
-                bitrate: 'Bitrate',
-                latency: 'Latency',
-                rtt: 'RTT',
-                buffer: 'Buffer',
-                droppedPackets: 'Dropped packets',
-                uptime: 'Uptime',
-                status: 'Status',
-                statsNotAvailable: 'Stats not available',
-            },
+    global.window = {
+        translations: {
+            copiedText: 'Copied',
+            copyError: 'Copy failed',
+            streamStatistics: 'Stream Statistics',
+            bitrate: 'Bitrate',
+            latency: 'Latency',
+            rtt: 'RTT',
+            buffer: 'Buffer',
+            droppedPackets: 'Dropped packets',
+            uptime: 'Uptime',
+            status: 'Status',
+            statsNotAvailable: 'Stats not available',
         },
-        document,
-        navigator: {},
-        setTimeout() {},
-        fetch,
-        console,
-        Uint8Array,
-        Array,
-        String,
-        Math,
-        encodeURIComponent,
+    };
+    Object.defineProperty(globalThis, 'fetch', {
+        configurable: true,
+        writable: true,
+        value: async (url) => {
+            requests.push(url);
+            return {
+                ok: true,
+                async json() {
+                    return {
+                        publisher: {
+                            bitrate: 1,
+                            buffer: 0,
+                            dropped_pkts: 0,
+                            latency: 0,
+                            rtt: 1.5,
+                            uptime: 10,
+                        },
+                        status: 'ok',
+                    };
+                },
+            };
+        },
     });
 
-    vm.runInContext(source, context);
-    context.loadStats('../logout');
+    loadStats('../logout');
 
     assert.deepEqual(requests, ['/en/sls-stats/..%2Flogout/']);
 });

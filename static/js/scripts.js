@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function(){
 });
 async function copyToClipboard(element) {
     const text = element.dataset.url;
-    if (navigator.clipboard && navigator.clipboard.writeText) {
+    if (navigator.clipboard?.writeText) {
         try {
             await navigator.clipboard.writeText(text);
             showCopyFeedback(element);
@@ -46,7 +46,7 @@ function copyToClipboardFallback(text, element) {
     } catch (err) {
         showCopyError(element);
     } finally {
-        document.body.removeChild(textArea);
+        textArea.remove();
     }
 }
 function showCopyFeedback(element) {
@@ -173,4 +173,8 @@ function formatUptime(seconds) {
     const secs = seconds % 60;
     const time = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
     return days > 0 ? `${days}d ${time}` : time;
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { copyToClipboard, copyToClipboardFallback, loadStats, formatUptime };
 }
